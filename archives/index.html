@@ -326,7 +326,10 @@ Html:xt + [Ctrl+e]：生成XHTML标准的结构代码，x表示Xhtml，t表示Tr
                     <span>CSS学习笔记 五</span>
             </a>
             <div class="abstract-content">
-                CSS学习笔记 · 五
+                CSS学习笔记 · 五⒆删除冗余CSS的方法：  ■chrome浏览器 F12|审查元素 控制台的 Audits：
+12·Audits 会检测出页面中没有用到的CSS，需要手动删除这些多余的CSS；·Audits 检测出的是多余无用的CSS块，而不是某一行CSS；
+  ■CSS usage插件：
+
             </div>
             <div class="abstract-post-meta">
                 <!-- date  -->
@@ -352,7 +355,9 @@ Html:xt + [Ctrl+e]：生成XHTML标准的结构代码，x表示Xhtml，t表示Tr
                     <span>CSS学习笔记 四</span>
             </a>
             <div class="abstract-content">
-                CSS学习笔记 · 四
+                CSS学习笔记 · 四⑺CSS属性：
+①尺寸属性：
+123456789101112131415161718192021222324252627282930313233343536373839404142width属性：默认值是auto（浏览器根据元素display类型决定），不继承，用于设置元素的宽度（通常指盒子模型中内容部分宽度——★前提是box-sizing值为content-box）；    结构： width: value;        width: 100px;    属性值类型：        auto    默认值，浏览器根据元素display类型决定；        l...
             </div>
             <div class="abstract-post-meta">
                 <!-- date  -->
@@ -378,7 +383,9 @@ Html:xt + [Ctrl+e]：生成XHTML标准的结构代码，x表示Xhtml，t表示Tr
                     <span>CSS学习笔记 三</span>
             </a>
             <div class="abstract-content">
-                CSS学习笔记 · 三
+                CSS学习笔记 · 三⑷元素的显示方式：元素有行内元素、块级元素和行内块级元素等不同显示方式，浏览器对不同的标签有不同的默认display属性；
+  基本分类：
+1234567①行内元素：一个行单元之内可以有多个（与文本内容一起按顺序排列，占满后换下一行显示），宽高由内容所决定，且不可以设置宽高[display:inline]；如：a标签、span标签、b/u/i/s标签、strong/em/del/ins标签、font标签等。②块级元素：一个行单元之内只能有一个（不论其大小，其他元素都不能显示在所占的这一行），默认情况下宽度（准确说是内容宽+左右内边距+左右边框宽的和）继承父元素宽度，...
             </div>
             <div class="abstract-post-meta">
                 <!-- date  -->
@@ -404,7 +411,18 @@ Html:xt + [Ctrl+e]：生成XHTML标准的结构代码，x表示Xhtml，t表示Tr
                     <span>CSS学习笔记 二</span>
             </a>
             <div class="abstract-content">
-                CSS学习笔记 · 二
+                CSS学习笔记 · 二CSS选择器：用来确定设置的样式作用于哪些元素；
+1选择器 &#123;属性:值; ...&#125;
+Ⅰ基础选择器：
+①标签选择器：标签选择器会选中body中所有具有该标签名的标签；
+12结构：html标签名&#123;属性:值;...&#125;
+&lt;style&gt;
+    x标签{...}        /*选中所有的x标签*/
+&lt;/style&gt;
+  …  
+123&lt;x标签&gt;				&lt;!--第一个x标签--&gt;&lt;x标签&gt;...
+  
+②类选择器：类选择器会选中body中所有具有该类名的标签，同一类名可以给任...
             </div>
             <div class="abstract-post-meta">
                 <!-- date  -->
@@ -430,7 +448,9 @@ Html:xt + [Ctrl+e]：生成XHTML标准的结构代码，x表示Xhtml，t表示Tr
                     <span>CSS学习笔记 一</span>
             </a>
             <div class="abstract-content">
-                CSS学习笔记 · 一
+                CSS学习笔记 · 一⑴W3C的三层分离标准：  结构标准Html：从语义的角度描述页面的结构（尽管Html中也有一些用来设置样式的属性，但根据三层分离标准不推荐使用）；  表现标准CSS：从样式的角度来修饰页面；  行为标准JavaScript：从交互的角度提升用户体验。
+⑵CSS层叠样式表（Cascading Style Sheets）：表现标准，给页面上的结构“穿上衣服”；  作用：1.美化网页（通过css控制标签的样式）；    2.网页布局（通过css控制标签的位置）。    ☆注意：CSS必须以Html页面为基础，没有Html页面上的标签元素就无法显示设置的CSS样式！
+  ...
             </div>
             <div class="abstract-post-meta">
                 <!-- date  -->

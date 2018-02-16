@@ -336,7 +336,10 @@
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <h1 id="CSS学习笔记-·-一"><a href="#CSS学习笔记-·-一" class="headerlink" title="CSS学习笔记 · 一"></a>CSS学习笔记 · 一</h1>
+        <h1 id="CSS学习笔记-·-一"><a href="#CSS学习笔记-·-一" class="headerlink" title="CSS学习笔记 · 一"></a>CSS学习笔记 · 一</h1><p>⑴W3C的三层分离标准：<br>  结构标准Html：从语义的角度描述页面的结构（尽管Html中也有一些用来设置样式的属性，但根据三层分离标准不推荐使用）；<br>  表现标准CSS：从样式的角度来修饰页面；<br>  行为标准JavaScript：从交互的角度提升用户体验。</p>
+<p>⑵CSS层叠样式表（Cascading Style Sheets）：表现标准，给页面上的结构“穿上衣服”；<br>  作用：1.美化网页（通过css控制标签的样式）；<br>    2.网页布局（通过css控制标签的位置）。<br>    ☆注意：CSS必须以Html页面为基础，没有Html页面上的标签元素就无法显示设置的CSS样式！</p>
+<p>  CSS的三种写法结构：<br>    ①行内样式：将CSS样式中的“属性名:值;”对直接放在对应标签内的style属性中，不使用选择器，但作用域仅限于当前标签；<br>          <x标签 style="属性名:属性值;属性名:属性值" ...=""><br>    ②嵌套样式：将CSS样式中的选择器及属性值设置放在位于head中的style标签里，必须使用相应的选择器，其作用域是当前整个Html文档；<br>          <head><br>            <style><br>                选择器 {<br>                    属性名:属性值;        /<em>声明：一对属性名与属性值既为一个声明。属性值一般用””括起来</em>/<br>                    …;<br>                }<br>            </style><br>        </head><br>    ③外联样式：将CSS样式中的选择器及属性值设置放在外部的后缀名为.css的文件中，并使用link标签引用到当前Html文档中，必须使用相应的选择器，其作用域是所有引用该CSS文件的Html文档。<br>        .css文件中：<br>        选择器 {<br>            属性名:属性值;        /<em>声明：一对属性名与属性值既为一个声明。属性值一般用””括起来</em>/<br>            …;<br>        }<br>        …<br>        .html页面中：<br>          <link rel="stylesheet" href="CSS文件路径"><br>    ★注意：外联样式表中不需要设置style标签，因为该标签是Html页面中的元素，而非CSS的组成部分！<br>    ★注意：行内样式中的属性值会具有较高的优先级，而内嵌和外联样式并不改变任何优先级顺序，只是要注意不同样式表对应的style标签或link标签引入时的顺序，这会优先级相同的属性值之间的层叠关系！！！</x标签></p>
+
     </article>
     <!-- 前后页  -->
     <ul class="post-paginator">
