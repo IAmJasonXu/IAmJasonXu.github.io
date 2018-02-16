@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>XuJian&#39;s Studio.</title>
+  
+  <subtitle>it&#39;s better to burn out than to fade away.</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2018-02-16T09:49:58.110Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>Jason Xu</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>CSS学习笔记 五</title>
+    <link href="http://yoursite.com/2014/02/16/CSS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B005/"/>
+    <id>http://yoursite.com/2014/02/16/CSS学习笔记05/</id>
+    <published>2014-02-16T06:24:53.000Z</published>
+    <updated>2018-02-16T09:49:58.110Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="CSS学习笔记-·-五"><a href="#CSS学习笔记-·-五" class="headerlink" title="CSS学习笔记 · 五"></a>CSS学习笔记 · 五</h1>]]></content>
+    
+    <summary type="html">
+    
+      CSS学习笔记
+    
+    </summary>
+    
+      <category term="CSS" scheme="http://yoursite.com/categories/CSS/"/>
+    
+    
+      <category term="Note" scheme="http://yoursite.com/tags/Note/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CSS学习笔记 四</title>
+    <link href="http://yoursite.com/2014/02/16/CSS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B004/"/>
+    <id>http://yoursite.com/2014/02/16/CSS学习笔记04/</id>
+    <published>2014-02-16T06:24:49.000Z</published>
+    <updated>2018-02-16T09:49:20.917Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="CSS学习笔记-·-四"><a href="#CSS学习笔记-·-四" class="headerlink" title="CSS学习笔记 · 四"></a>CSS学习笔记 · 四</h1>]]></content>
+    
+    <summary type="html">
+    
+      CSS学习笔记
+    
+    </summary>
+    
+      <category term="CSS" scheme="http://yoursite.com/categories/CSS/"/>
+    
+    
+      <category term="Note" scheme="http://yoursite.com/tags/Note/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CSS学习笔记 三</title>
+    <link href="http://yoursite.com/2014/02/16/CSS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B003/"/>
+    <id>http://yoursite.com/2014/02/16/CSS学习笔记03/</id>
+    <published>2014-02-16T06:24:45.000Z</published>
+    <updated>2018-02-16T09:48:46.626Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="CSS学习笔记-·-三"><a href="#CSS学习笔记-·-三" class="headerlink" title="CSS学习笔记 · 三"></a>CSS学习笔记 · 三</h1>]]></content>
+    
+    <summary type="html">
+    
+      CSS学习笔记
+    
+    </summary>
+    
+      <category term="CSS" scheme="http://yoursite.com/categories/CSS/"/>
+    
+    
+      <category term="Note" scheme="http://yoursite.com/tags/Note/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CSS学习笔记 二</title>
+    <link href="http://yoursite.com/2014/02/16/CSS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B002/"/>
+    <id>http://yoursite.com/2014/02/16/CSS学习笔记02/</id>
+    <published>2014-02-16T06:24:39.000Z</published>
+    <updated>2018-02-16T09:48:00.293Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="CSS学习笔记-·-二"><a href="#CSS学习笔记-·-二" class="headerlink" title="CSS学习笔记 · 二"></a>CSS学习笔记 · 二</h1>]]></content>
+    
+    <summary type="html">
+    
+      CSS学习笔记
+    
+    </summary>
+    
+      <category term="CSS" scheme="http://yoursite.com/categories/CSS/"/>
+    
+    
+      <category term="Note" scheme="http://yoursite.com/tags/Note/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CSS学习笔记 一</title>
+    <link href="http://yoursite.com/2014/02/16/CSS%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B001/"/>
+    <id>http://yoursite.com/2014/02/16/CSS学习笔记01/</id>
+    <published>2014-02-16T06:24:36.000Z</published>
+    <updated>2018-02-16T09:47:44.951Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="CSS学习笔记-·-一"><a href="#CSS学习笔记-·-一" class="headerlink" title="CSS学习笔记 · 一"></a>CSS学习笔记 · 一</h1>]]></content>
+    
+    <summary type="html">
+    
+      CSS学习笔记
+    
+    </summary>
+    
+      <category term="CSS" scheme="http://yoursite.com/categories/CSS/"/>
+    
+    
+      <category term="Note" scheme="http://yoursite.com/tags/Note/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>HTML学习笔记 五</title>
+    <link href="http://yoursite.com/2014/02/16/HTML%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B005/"/>
+    <id>http://yoursite.com/2014/02/16/HTML学习笔记05/</id>
+    <published>2014-02-16T06:24:22.000Z</published>
+    <updated>2018-02-16T09:47:14.325Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="HTML学习笔记-·-五"><a href="#HTML学习笔记-·-五" class="headerlink" title="HTML学习笔记 · 五"></a>HTML学习笔记 · 五</h1>]]></content>
+    
+    <summary type="html">
+    
+      HTML学习笔记
+    
+    </summary>
+    
+      <category term="HTML" scheme="http://yoursite.com/categories/HTML/"/>
+    
+    
+      <category term="Note" scheme="http://yoursite.com/tags/Note/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>HTML学习笔记 四</title>
+    <link href="http://yoursite.com/2014/02/16/HTML%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B004/"/>
+    <id>http://yoursite.com/2014/02/16/HTML学习笔记04/</id>
+    <published>2014-02-16T06:24:14.000Z</published>
+    <updated>2018-02-16T09:46:50.554Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="HTML学习笔记-·-四"><a href="#HTML学习笔记-·-四" class="headerlink" title="HTML学习笔记 · 四"></a>HTML学习笔记 · 四</h1>]]></content>
+    
+    <summary type="html">
+    
+      HTML学习笔记
+    
+    </summary>
+    
+      <category term="HTML" scheme="http://yoursite.com/categories/HTML/"/>
+    
+    
+      <category term="Note" scheme="http://yoursite.com/tags/Note/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>HTML学习笔记 三</title>
+    <link href="http://yoursite.com/2014/02/16/HTML%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B003/"/>
+    <id>http://yoursite.com/2014/02/16/HTML学习笔记03/</id>
+    <published>2014-02-16T06:24:10.000Z</published>
+    <updated>2018-02-16T09:46:27.673Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="HTML学习笔记-·-三"><a href="#HTML学习笔记-·-三" class="headerlink" title="HTML学习笔记 · 三"></a>HTML学习笔记 · 三</h1>]]></content>
+    
+    <summary type="html">
+    
+      HTML学习笔记
+    
+    </summary>
+    
+      <category term="HTML" scheme="http://yoursite.com/categories/HTML/"/>
+    
+    
+      <category term="Note" scheme="http://yoursite.com/tags/Note/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>HTML学习笔记 二</title>
+    <link href="http://yoursite.com/2014/02/16/HTML%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B002/"/>
+    <id>http://yoursite.com/2014/02/16/HTML学习笔记02/</id>
+    <published>2014-02-16T06:24:06.000Z</published>
+    <updated>2018-02-16T09:45:59.229Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="HTML学习笔记-·-二"><a href="#HTML学习笔记-·-二" class="headerlink" title="HTML学习笔记 · 二"></a>HTML学习笔记 · 二</h1>]]></content>
+    
+    <summary type="html">
+    
+      HTML学习笔记
+    
+    </summary>
+    
+      <category term="HTML" scheme="http://yoursite.com/categories/HTML/"/>
+    
+    
+      <category term="Note" scheme="http://yoursite.com/tags/Note/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>HTML学习笔记 一</title>
+    <link href="http://yoursite.com/2014/02/16/HTML%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B001/"/>
+    <id>http://yoursite.com/2014/02/16/HTML学习笔记01/</id>
+    <published>2014-02-16T06:23:59.000Z</published>
+    <updated>2018-02-16T09:44:44.657Z</updated>
+    
+    <content type="html"><![CDATA[<p>#HTML学习笔记 · 一</p>]]></content>
+    
+    <summary type="html">
+    
+      HTML学习笔记
+    
+    </summary>
+    
+      <category term="HTML" scheme="http://yoursite.com/categories/HTML/"/>
+    
+    
+      <category term="Note" scheme="http://yoursite.com/tags/Note/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>常用快捷键及命令</title>
+    <link href="http://yoursite.com/2014/02/16/windows%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
+    <id>http://yoursite.com/2014/02/16/windows常用命令/</id>
+    <published>2014-02-16T05:53:27.000Z</published>
+    <updated>2018-02-16T09:34:25.569Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="常用快捷键及命令"><a href="#常用快捷键及命令" class="headerlink" title="常用快捷键及命令"></a>常用快捷键及命令</h1><p>##1.Windows操作系统</p><hr><p>###快捷键：</p><ul><li><p>Ctrl+A—————全选</p></li><li><p>Ctrl+C—————复制</p></li><li><p>Ctrl+V—————粘贴</p></li><li><p>Ctrl+X—————剪切</p></li><li><p>Ctrl+S—————保存</p></li><li><p>Ctrl+Z—————撤销上一个操作</p></li><li><p>Ctrl+Y—————还原上一个操作</p></li><li><p>Alt+Tab————–切换程序（按住Alt）</p></li><li><p>Alt+F4—————退出程序</p></li><li><p>F5———————刷新</p></li><li><p>Ctrl+Alt+Del——–显示安全选项</p></li><li><p>Win+D—————切换到桌面</p></li><li><p>Win+E—————打开资源管理器</p></li><li><p>Win+L—————锁屏</p></li><li><p>Win+R—————打开“运行”窗口，输入CMD打开命令提示符窗口：</p><pre><code>calc：运行计算器mspaint：运行画图notepad：运行记事本</code></pre></li><li><p>Win+数字键——–打开或显示超级任务栏第N个图标代表的程序</p></li><li><p>Win+方向键——–最大化、还原/最小化窗口</p></li></ul><hr><p>###CMD命令：</p><ul><li>calc——————启动计算器</li><li>clipbrd————–剪贴板查看器</li><li>devmgmt.msc—–设备管理器</li><li>explorer————资源管理器</li><li>eudcedit————造字程序</li><li>notepad————打开记事本</li><li>magnify————放大镜实用程序</li><li>mem.exe———–显示内存使用情况</li><li>mspaint————打开画图板</li><li>mstsc—————远程桌面连接</li><li>regedit.exe——–注册表</li><li>write—————–写字板</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      记录常用的快捷键及命令
+    
+    </summary>
+    
+      <category term="general" scheme="http://yoursite.com/categories/general/"/>
+    
+    
+      <category term="general" scheme="http://yoursite.com/tags/general/"/>
+    
+  </entry>
+  
+</feed>
