@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>JavaScript学习笔记 一 · Jason Xu&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        height: 50vh;
+        overflow: hidden;
+        box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.7);
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= /css/style.css?v=20180204 as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" type="text/css" href= /css/mobile.css?v=20180204 media="(max-width: 980px)"/>
+    <link rel="icon" href= /assets/favicon.ico>
+    <script>
+  // load webfont-loader async, and add callback function
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+  
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+      if (postIntroTags) {
+        postIntroTags.classList.add('post-fade-in');
+      }
+      if (postIntroMeat) {
+        postIntroMeat.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  async("https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", asyncCb)
+</script>
+    <script>
+        (function (w) {
+            "use strict";
+            // rel=preload support test
+            if (!w.loadCSS) {
+                w.loadCSS = function () { };
+            }
+            // define on the loadCSS obj
+            var rp = loadCSS.relpreload = {};
+            // rel=preload feature support test
+            // runs once and returns a function for compat purposes
+            rp.support = (function () {
+                var ret;
+                try {
+                    ret = w.document.createElement("link").relList.supports("preload");
+                } catch (e) {
+                    ret = false;
+                }
+                return function () {
+                    return ret;
+                };
+            })();
+
+            // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+            // then change that media back to its intended value on load
+            rp.bindMediaToggle = function (link) {
+                // remember existing media attr for ultimate state, or default to 'all'
+                var finalMedia = link.media || "all";
+
+                function enableStylesheet() {
+                    link.media = finalMedia;
+                }
+
+                // bind load handlers to enable media
+                if (link.addEventListener) {
+                    link.addEventListener("load", enableStylesheet);
+                } else if (link.attachEvent) {
+                    link.attachEvent("onload", enableStylesheet);
+                }
+
+                // Set rel and non-applicable media type to start an async request
+                // note: timeout allows this to happen async to let rendering continue in IE
+                setTimeout(function () {
+                    link.rel = "stylesheet";
+                    link.media = "only x";
+                });
+                // also enable media after 3 seconds,
+                // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+                setTimeout(enableStylesheet, 3000);
+            };
+
+            // loop through link elements in DOM
+            rp.poly = function () {
+                // double check this to prevent external calls from running
+                if (rp.support()) {
+                    return;
+                }
+                var links = w.document.getElementsByTagName("link");
+                for (var i = 0; i < links.length; i++) {
+                    var link = links[i];
+                    // qualify links to those with rel=preload and as=style attrs
+                    if (link.rel === "preload" && link.getAttribute("as") === "style" && !link.getAttribute("data-loadcss")) {
+                        // prevent rerunning on link
+                        link.setAttribute("data-loadcss", true);
+                        // bind listeners to toggle media back
+                        rp.bindMediaToggle(link);
+                    }
+                }
+            };
+
+            // if unsupported, run the polyfill
+            if (!rp.support()) {
+                // run once at least
+                rp.poly();
+
+                // rerun poly on an interval until onload
+                var run = w.setInterval(rp.poly, 500);
+                if (w.addEventListener) {
+                    w.addEventListener("load", function () {
+                        rp.poly();
+                        w.clearInterval(run);
+                    });
+                } else if (w.attachEvent) {
+                    w.attachEvent("onload", function () {
+                        rp.poly();
+                        w.clearInterval(run);
+                    });
+                }
+            }
+            // commonjs
+            if (typeof exports !== "undefined") {
+                exports.loadCSS = loadCSS;
+            }
+            else {
+                w.loadCSS = loadCSS;
+            }
+        }(typeof global !== "undefined" ? global : this));
+    </script>
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Jason Xu&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">JavaScript学习笔记 一</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Jason Xu's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            JavaScript学习笔记 一
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = Note>Note</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = "/static/api/js/share.js"];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2014/03/02</span>
+                
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="JavaScript学习笔记-·-一"><a href="#JavaScript学习笔记-·-一" class="headerlink" title="JavaScript学习笔记 · 一"></a>JavaScript学习笔记 · 一</h1><hr>
+<p>㈠</p>
+<p>㈡JavaScript——ECMAScript的一种实现和扩展；</p>
+<p>⑴JavaScript简介：</p>
+<p>⒈JavaScript起初的目的：JavaScript最早出现的目的是为了做一些简单的表单验证；<br>  JavaScript现在的意义：JS现在的应用几乎无处不在→ PC Web 页面特效；<br>                          → 移动端（web App, App）；<br>                          → AJAX（异步和服务器交互）；<br>                          → 后端开发（NodeJS）；<br>                          → 游戏、vr、智能家电。</p>
+<p>⒉JavaScript是编程语言：<br>    HTML&amp;CSS——标记语言与表：<br>        HTML和CSS不是编程语言，因为它们不具有逻辑描述能力；<br>    JavaScript——编程语言：<br>        JavaScript是一门解释型的、弱类型的、基于原型的编程语言。</p>
+<p>  ①编程语言：具有逻辑描述能力的语言就是编程语言，其中逻辑包括数学逻辑和业务逻辑；<br>  ②源代码和机器码：源代码是编程人员为实现某种需求，按照既定的语法规则编写的代码文件，是人类可以看懂的代码，如.cppC++语言文件、.jsJS脚本文件、汇编语言文件；<br>            机器码是一个纯二进制的指令集合，是机器唯一可以看懂并执行的代码，若想要让计算机能够识别我们所写的源代码，需要一个翻译官把我们的源代码翻译成二进制再交给计算机执行——JavaScript的解释程序（引擎）、C++的编译程序、汇编语言的汇编程序。<br>  ③解释型编程语言：在运行时，将源代码翻译一句，执行一句；优点：开发效率高，缺点：性能相对较低，适合用来开发一些应用级别的软件。<br>    编译型编程语言：在运行前，先一次性将源码全部翻译成目标文件（如C++是可执行文件，如Java是中间文件），然后每次执行时不再使用源文件；优点：程序性能较高，缺点：开发效率低，适合开发一些系统级别的软件。<br>  ④弱类型编程语言：用变量引用数据时，变量不用事先声明其要引用数据的数据类型，在执行时变量所代表的数据类型由实际值来决定（动态的类型），比较灵活；<br>    强类型编程语言：用变量引用数据时，变量必须事先声明其要引用数据的数据类型，在使用时该变量只能引用指定类型的数据（静态的类型），不能匹配（且不能隐式转换）则会报错，也就是说变量类型在代码定义时决定的。</p>
+<p>⒊JavaScript历史：<br>  ①JavaScript问世——Netscape(网景，即现在的Mozilla)公司研发出NetScape Navigator1.0浏览器，并发现需要一种可以嵌入网页的脚本语言，用来控制浏览器行为，主要是提供表单验证功能；<br>              Netscape雇佣了程序员Brendan Eich（布兰登·艾奇）开发这种网页脚本语言——JavaScript 1.0（名字借Java的光，两者没有直接关系），而Navigator 2.0浏览器正式内置了JavaScript脚本语言。<br>  ②JavaScript竞争——微软模仿 JavaScript 开发了一种相近的语言，为避免商标冲突，取名为 JScript，首先内置于IE 3.0；<br>              而在微软之后，共有3种不同的 JavaScript 版本同时存在：NetscapeNavigator 3.0中的 JavaScript、IE中的 JScript 以及CEnvi中的 ScriptEase；<br>              然而，并没有一个标准来统一其语法或特性。<br>  ③JavaScript标准化——ECMA（European Computer Manufacturers Association欧洲计算机制造商协会）发布 ECMA-262 标准文件，规定了浏览器脚本语言的标准，并将这种语言称为ECMAScript（为避免商标冲突和体现中立性）。</p>
+<p>⒋JavaScript组成：<br>  ①ECMAScript 标准：JavaScript的核心，包括文法、词法、语法、算法等规定；<br>  ②DOM（Document Object Model）文档对象模型：W3C组织推荐的处理可扩展标记语言（如HTML,SVG or XML）的标准编程接口。DOM将Web页面连接到脚本或编程语言（通常指JavaScript语言），向其提供操作网页中的<br>                          HTML和CSS的API工具（即各种JS对象及其属性、方法）。但将HTML、SVG或XML文档建模为对象不是JavaScript语言的一部分，尽管通常会使用 JavaScript 来访问 DOM，<br>                          但它也可以被其他语言使用；<br>  ③BOM（Browser Object Model）浏览器对象模型：该模型提供了独立于内容的、可以与浏览器窗口进行互动的对象结构——简单地说就是一组操作浏览器的API工具，由多个对象组成，其中代表浏览器窗口的window对<br>                          象是BOM的顶层对象，而其他对象都是该对象的子对象；由于BOM没有相关标准，所以除了实际上已经默认的一些标准外，每个浏览器都有其自己对BOM的实现方式。<br>  ★注意：Web API——Web 提供了各种各样的 API 来完成各种的任务，这些API可以用JavaScript来访问，令你可以做很多事儿，小到对任意window或者element做小幅调整，大到使用诸如WebGL和Web Audio的API来<br>      生成复杂的图形和音效。<br>      Web API分类：    文档对象模型（Document Object Model）；<br>            设备 API（Device APIs）；<br>            通信 API（Communication APIs）；<br>            数据管理 APIs（Data management APIs）；<br>            特权 API（Privileged APIs）；<br>            已认证应用程序的私有 API（Certified APIs）。<br>  ☆注意：API——全称Application Programming Interface应用程序编程接口——通常是一些预先定义的函数或是封装好的对象（将函数功能封装到对象内部作为其属性和方法来使用），目的是提供应用程序与开发<br>      人员基于某软件或硬件得以访问一组例程的能力，而又无需访问源码，或理解内部工作机制的细节。</p>
+<p>⒌JavaScript书写方式：<br>  ①行内JavaScript：将JS代码作为字符串属性值写在对应HTML标签元素的特定事件属性中去，当该事件发生时，浏览器会将这段代码串作为相应的事件处理程序去执行（其执行环境类似于将代码放入function(event){with(document){with(this.form||{}){with(this){code}}}}，然后将此匿名函数传给其接口对象.on事件属性去调用）；<br>        <button onclick="alert(1);">按钮</button><br>  ②内嵌JavaScript：将JS代码写在script标签对之内，并将该script标签放在HTML页面的head标签或body标签之内，甚至可以放在整个html标签之外|下（可以避免标签元素未加载，但不推荐）；<br>        <script type="text/javascript">        //type属性目的是告诉浏览器，该标签中是js代码，type属性在html5版本中可以省略<br>            JavaScript Code;<br>        </script><br>  ③外联JavaScript：将JS代码写在外部的JavaScript源文件（.js后缀）中去，并通过script标签引入相应的HTML页面中，设置script标签的src属性值为要引入的JS文件的路径；<br>        <script src=".js文件的路径"></script><br>  ★注意：外联JS中的script标签对内书写的任何JS代码都不会起作用，因为加载时会把外部代码覆盖到该script标签对之内！！！<br>  ★注意：JavaScript中代码并没有优先级顺序，但是需要注意不同代码执行的先后顺序，修改相同的变量或对象及其属性时会造成覆盖！！！<br>  ★注意：JavaScript代码的加载时机遵循其在HTML页面中的插入位置，即script标签或行内JS所在的元素标签在整个页面中的位置，特别注意两点影响<br>      ·当某段JavaScript代码加载时，此HTML页面中在其引入标签后面的所有其他标签并未加载（包括其他JS代码的引入标签），此时对应的HTML元素并未生成，查找这些元素的接口对象时会返回null值；<br>      ·后加载的JS代码，会覆盖前面的某些设置，同样也可以使用之前的某些设置。</p>
+<p>⒍JavaScript常用输出：<br>  [window.]alert(message);            //弹出警告对话框，将参数message显示为其中的文本提示信息，如果实参是对象则转换为字符串显示<br>  [window.]prompt(message, default);        //弹出输入对话框，将参数message显示为其中的文本提示信息，default为输入框显示的默认值，并将用户输入数据作为★字符串★返回<br>  [window.]confirm(message);            //弹出选择对话框，将参数message显示为其中的文本提示信息，选择确定返回ture，取消返回false<br>  [window.]console.log(obj1[,obj2,…,objN]);    //控制台输出多个数据，number和boolean类型则字体显示为蓝色，string类型显示深灰色，undefined和null显示浅灰色，对象则显示为链接（非实时跟踪）<br>       console.log(msg[,subs1,…,subsN]);     //控制台格式化输出，msg是带有 格式占位符 的格式字符串，%s字符串，%d整数，%i整数，%f浮点数，%o对象的链接，%cCSS格式字符串<br>  [window.]console.dir(obj);            //控制台输出一个对象，检查其所有属性和属性值（实时跟踪）<br>  [window.]document.write(markup);        //输出内容到HTML页面的文档流，作为HTML代码去解析<br>                        //★注意：在关闭(即已加载了所有标签)的文档上调用 document.write时，会自动调用 document.open 再次打开该文档，而这将清除文档原内容——即事件驱动程序中不要使用；<br>                        //★注意：在页面加载过程中调用 document.write，并不会清空原内容，但要注意JScode加载位置影响其在页面中的输入位置；</p>
+<p>⒎JavaScript调试：发现代码BUG——语法错误和逻辑错误（算数逻辑和业务逻辑）。</p>
+<p>⒏计算机组成部分：<br>  软件：<br>    应用软件；<br>    系统软件┳操作系统；<br>        ┗数据库管理系统。<br>  硬件：<br>    计算器┓中央处理器；<br>    控制器┛CPU；<br>    存储器┳寄存器；<br>          ┣高速缓冲存储器；<br>          ┣主存/内存；<br>          ┗辅存/外存；<br>    输入设备；<br>    输出设备；<br>    总线。</p>
+<p>⑵ECMAScirpt标准语法：</p>
+<p>Ⅰ词法结构：编程语言的词法结构是一套基础性规则，是语法的基础；</p>
+<p>⒈字符集：JavaScript程序使用Unicode字符集编写，Unicode是ASCII和Latin-1的超集，并支持地球上几乎所有在用的语言；</p>
+<pre><code>①JavaScript语言中区分大小写，即关键字、变量名、函数名和所有的标识符都必须采取一致的大小写形式。
+★注意：HTML中并不区分大小写（除XHTML区分外），所以要注意，在使用浏览器提供的HTML标签或其属性的★API接口★——即获取相应的JavaScript对象或其中的属性时不要混淆，HTML中的标签和属性名可以使用大写
+    或小写——两者是等价的，而JavaScript中对应的标签名和属性名则必须是小写——如getElementsByTagName(&quot;div&quot;)，element.style中的标签名和属性名不能用大写；
+    另外，CSS样式的属性名中是可能含有‘-’的，然而JavaScript中标识符是不能含有‘-’的，所以CSS属性在JavaScript的行内样式接口对象style中对应的属性名采取驼峰命名法代替‘-’分割符。
+②JavaScript会忽略程序中标识（token）之间的空格符号——空格的意义仅在于词法分析阶段，即使解释器能够从源码中区别出ECMAScript语言的token，而在之后的语法解析过程中是不关心空格的；
+  JavaScript多数情况下同样会忽略换行符（其同样不是token），但其仍然会被传递并参与语法解析过程，以作为自动添加分号的判断依据之一；
+  Unicode格式控制字符（用\uXXXX表示）可以用在JavaScript的注释、字符串直接量和正则表达式直接量中，但不能用在标识符中（除了零宽连接符\u200D和零宽非连接符\uFEFF是可以出现在标识符中的，但不能为首字符）；
+③Unicode转义序列：为避免某些计算机系统无法显示Unicode字符全集，JavaScript定义了一种特殊序列，可以使用6个ASCII字符来代表任意16位Unicode内码——转义序列\uXXXX，X表示一位16进制数。
+</code></pre><p>⒉JavaScript注释：<br>  单行注释：<br>    //注释内容直至行结束符<br>  多行注释：<br>    /<em><br>    注释内容中不能嵌套另一个多行注释，否则会出现匹配错误
+    </em>/</p>
+<p>⒊直接量[字面量]：在程序中直接使用的数据值；</p>
+<p>⒋变量：在程序中通过绑定的标识符，即变量名，来使用的数据值；<br>★★★★注意：一定要区分JavaScript中的变量与C语言或C++中的变量概念，两者虽然同样是引用数据的一种方式，但却有着巨大的差异；<br>    首先，C语言和C++都是强类型语言，声明变量时需要指定其类型。在程序运行至该变量的定义语句时，会给该变量分配一个固定的内存空间，大小根据其声明的类型。之后，该变量名就与固定的内存地址<br>          始终绑定在一起，而该变量名所代表的值就是其绑定的内存空间所存放的数据。给一个变量赋值，就是向该变量所对应的内存空间上去覆盖原有数据。另外，引用类型是不重新分配内存空间的，因<br>          为引用就是给原有的一个变量起个别名，即该变量同时拥有了两个名字，都绑定到同一个固定内存空间上去，且引用一旦绑定就不能改变。<br>    其次，C语言和C++中初始化和赋值本质上是两种操作（对与引用类型和类类型变量而言尤其明显），初始化发生在创建变量、给变量分配内存空间时，如果变量是类类型则会调用其某一个构造函数，如果<br>          变量是引用类型则必须在定义时初始化，将其绑定到某个同类型的变量上去，并且初始化只发生一次，没有显式或隐式初始化的变量其值不确定；而赋值操作则发生在变量被创建之后，如果变量是<br>          类类型则调用的是对应的赋值运算符，如果变量是引用类型则赋值改变的是其初始化时绑定的变量。<br>    同比，JavaScript是弱类型语言，声明变量时不需要指定其类型。在程序执行某段JavaScript Code前，会先为其建立一个执行环境（即执行上下文，其包括词法环境、变量环境以及this绑定），然后进行<br>          声明绑定初始化——在变量环境中为该代码里的所有声明变量和声明函数各建立一条命名绑定，变量名（若是新建的）绑定undefined，函数名绑定一个函数对象。这个过程就是所谓的“预解析”和<br>          声明提升。所以JS代码中本质上只有变量的赋值操作，而赋值操作就是改变该变量名所绑定的数据值，即每个变量名并没有绑定一个固定不变的内存空间，而是随时可以被修改绑定到其他数据之上的。<br>          JS中的变量很像C++中的引用，只是区别在于它并不固定绑到某一数据。<br>    另外，JavaScript中如果某变量绑定的是基本类型，则将其赋值给另一个变量时会创建一个相同的新值，实际就是将自身绑定的值复制到另一个对应的环境记录绑定中去，但如果绑定的是引用类型的对象，<br>          则赋值操作不会创建新的对象，只是让另一个变量绑定到相同的对象上，可以理解为环境记录中的绑定里放的是对象的地址，而不是对象本身。<br>    ①变量声明：JavaScript是弱类型（动态类型）语言，声明变量时统一用 var 关键字，而不需要声明其类型，其类型由实际运行时所绑定的值来决定；<br>        var identifier[, identifier[, identifier[…]]];<br>        var identifier[ = expression[, identifier[ = expression[…]]]];<br>    ②标识符和保留字：<br>    ③变量使用：<br>        变量赋值——；<br>        变量引用——；<br>    ④变量作用域：<br>    ⑤“预解析”和声明提升：</p>
+<p>⒌类型和值：每个类型的数据值都有两中表现形式——字面量形式和变量形式；<br>    ■基本类型：<br>    ①数字类型：<br>    ②字符串类型：<br>    ③布尔类型：<br>    ④Undefined类型：<br>    ⑤Null类型：<br>    ■引用类型：<br>    ①对象类型：自定义对象和除了Object对象之外的其他内置对象都是由对应的构造函数对象所创建；<br>        按ECMA标准分类：<br>        原生对象：<br>            内置对象：宿主环境提供，但由ECMA规范定义；<br>            自定义对象：用户定义，符合ECMA标准规范；<br>        宿主对象：<br>            window等：宿主环境提供，但不受ECMA规范定义；<br>        按构造方式分类：<br>        普通对象（由Object或相应构造函数构造，无法调用）；<br>        函数对象（由Function构造，可以直接调用）；<br>        构造函数对象（由Function构造，可以直接调用，也可用new调用来构造其他对象）；<br>        内置对象：<br>    ★基本类型和引用类型的区别：<br>        基本类型数据（栈区）存储其原始值绑定到变量，引用类型数据（堆区）存储其地址绑定到变量；<br>        基本类型的值无法修改——对基本类型的变量赋值时只是将变量名绑定到新的值，引用类型的值可以被修改——对引用类型的变量可以修改其属性和属性值；<br>        基本类型的数据赋值时复制其原始值给新的变量，引用类型的数据赋值时传递其存储的地址给新的变量；</p>
+<p>Ⅱ表达式和运算符</p>
+<p>Ⅲ语句</p>
+<p>①<br>②<br>③<br>④<br>⑤<br>⑥跳转语句：<br>    ·throw 语句：抛出异常——使用 throw 语句，所谓异常(exception)是当发生了某种异常情况或错误时产生的一个 信号，而抛出异常就是用该 信号 通知发生了错误或异常状况；<br>              捕获异常——使用 try/catch/finally 语句，是指处理这个被抛出的异常信号，即采取必要的手段从异常中恢复；<br>              当异常被抛出时，JavaScript解释器会 立即停止 当前正在执行的逻辑，并跳转至 就近 的异常处理程序，即 catch 块中；<br>        throw expression;<br>    ·try/catch/finally 语句：<br>        try {<br>            //放入测试代码，当发生错误时：<br>            //直接由throw语句抛出异常，终止当前代码块的执行<br>            //或者由调用的方法间接抛出异常，再在此处进行捕获处理<br>        } catch(error) {<br>            //放入异常处理程序，当且仅当try语句块中抛出了异常时，才会执行这里的代码<br>            //可以通过局部变量 error 来获得对 Error对象 或者抛出的 其他值 的引用，而且catch子句中的标识符具有 块级作用域<br>            //可以基于某种原因处理这个异常，亦可以忽略这个异常<br>            //还可以通过 throw 语句在此重新抛出异常<br>        } finally {<br>            //不管try语句块是否抛出了异常，这里的逻辑总是会执行<br>            //终止一个try语句块的方式：<br>            //1)正常终止，执行完try语句块的最后一条语句<br>            //2)通过break、continue或return语句终止<br>            //3)抛出一个异常，异常被catch从句捕获<br>            //4)抛出一个异常，异常未被捕获，继续向上传播<br>        }</p>
+<p>Ⅳ对象</p>
+<p>Ⅴ数组</p>
+<p>Ⅵ函数<br>①字符串函数：本质上是 String 包装对象的方法；<br>  □索引位获取：<br>    str[index];<br>    str.charAt(index);<br>  □字符串拼接：<br>    str1.concat(str2);<br>    str1 + str2;<br>  □字符串截取：<br>    str.slice(begin, end);<br>    str.substring(begin, end);<br>    str.substr(begin, num);<br>  □大小写切换：<br>    str.toUpperCase();<br>    str.toLowerCase();<br>  □替换：<br>    str.replace(str1|regexp, str2);<br>    str.split(str1).join(str2);<br>  □查找：<br>    str.indexOf(substr);<br>    str.lastIndexOf(substr);<br>  □翻转：<br>    str.split(‘’).reverse().join(‘’);<br>  □去白：<br>    str.trim();            //等价于str.replace(/^\s+|\s+$/g, ‘’)</p>
+<p>⒍闭包：</p>
+<p>Ⅶ类和模块</p>
+<p>Ⅷ正则表达式：是一个描述字符模式的对象，JavaScript用RegExp类型对象来表示正则表达式，其中String和RegExp都定义了方法，后者使用正则表达式进行强大的模式匹配和文本检索与替换功能；</p>
+<p>⒈正则表达式的定义：</p>
+<p>■直接量[字面量]语法：    /…/;                //不能为空，否则被解析为单行注释<br>■RegExp构造函数语法：    new RegExp(“…”);        //参数字符串中的字符内容会被整体作为正则表达式斜杠内的直接量内容，即”/a/“对应正则表达式——/\/a\//<br>            new RegExp(/…/);</p>
+<pre><code>①直接量字符：    直接量字符            匹配
+
+        字母和数字            自身(a-z,A-Z,0-9)
+        \o                NUL字符(\u0000)
+        \t                制表符(\u0009)
+        \n                换行符(\u000A)
+        \v                垂直制表符(\u000B)
+        \f                换页符(\u000C)
+        \r                回车符(\u000D)
+        \xnn                由十六进制数nn指定的拉丁字符
+        \uxxxx                由十六进制数xxxx指定的Unicode字符
+        \cX                控制字符^X
+        \[特殊标点^$.*+?=!:|\/()[]{}]    （必须加\）对应字符标点
+★注意：虽然其中某些符号只有在正则表达式的特定上下文中才具有某种特殊含义，而在其他上下文中则被当成直接量处理，然而通行规则——必须使用前缀\来使用这些字符的直接量进行匹配！！！
+        [\]其他标点            （可以不加\）自身
+★注意：如果不记得哪些标点符号需要反斜线转义，可以在每个标点符号前都加上反斜线！！！
+    字母和数字则尽量不要用反斜线对其转义，以免其具有特殊含义！
+    反斜线本身的直接量必须使用反斜线进行转义！
+
+②字符类[简单类]：将直接量字符单独放进方括号内就组成了字符类，它可以匹配它所包含的任意字符；
+  ^ 符号[负向类]：用来定义否定字符类，它匹配所有不包含在方括号内的字符，定义否定字符类时，将一个‘^’符号作为左方括号内的第一个字符即可；
+  - 符号[范围类]：字符类可以使用连字符来表示字符范围；
+  预定义字符类：由于某些字符类非常常用，因此在JavaScript的正则表达式语法中，使用了这些特殊字符的转义字符来表示它们；
+        字符类                匹配
+        [...]                方括号内的任意字符
+        [^...]                不在方括号内的任意字符
+        .                除换行符和其他Unicode行终止符之外的任意字符
+        \w                任何ASCII字符组成的单词，等价于[a-zA-Z0-9]
+        \W                任何不是ASCII字符组成的单词，等价与[^a-zA-Z0-9]
+        \s                任何Unicode空白符
+        \S                任何非Unicode空白符的字符
+        \d                任何ASCII数字，等价于[0-9]
+        \D                除了ASCII数字之外的任何字符，等价于[^0-9]
+        [\b]                退格直接量（特例）
+
+③重复[量词]：    
+    贪婪的重复：尽可能多地匹配，而且允许后续的正则表达式继续匹配；
+        字符                含义
+        {n,m}                匹配前一项至少n次，但不能超过m次
+        {n,}                匹配前一项n次或者更多次
+        {n}                匹配前一项n次
+        ?                匹配前一项0次或者1次，也就是说前一项是可选的，等价于{0,1}
+        +                匹配前一项1次或多次，等价于{1,}
+        *                匹配前一项0次或多次，等价于{0,}
+    非贪婪的重复：当★能★匹配连续的多项时，其会尽可能少的匹配，只需在待匹配字符的量词后跟随一个问号即可；
+    ★★★★注意：正则表达式的模式匹配总是会寻找字符串中第一个可能匹配的位置，尽管其会尽可能少地匹配，此时也不会考虑它的子串中更短的匹配；
+        {n,m}?                
+        {n,}?                
+        {n}?                
+        ??                
+        +?                
+        *?                
+
+④选择、分组和引用：
+⑤指定匹配的位置：
+⑥修饰符：
+</code></pre><p>⒉正则表达式的方法：</p>
+<p>★注意：当正则表达式没有 “g” 标志时（非全局匹配），每次查找匹配都会从字符串的开头开始；<br>    当正则表达式使用 “g” 标志时（是全局匹配），其工作方式会发生一些改变：<br>        每一次查找匹配后都会重新记录或更新其 lastIndex 属性；<br>        下一次查找匹配将从正则表达式的该 lastIndex 属性指定的位置处开始（即使改变了被查找的字符串也依然会从该位置开始）；<br>        若某一次查找匹配没有找到匹配项（即test()返回false，exec()返回null时），则会重新将 lastIndex 属性置 0——下一次将从开头位置开始查找匹配；<br>    所以，全局匹配时可以多次执行 exec() 方法来查找同一个字符串中的所有成功匹配的子串！！！<br>    但同时要注意——其调用test()方法时也会使用并更新 lastIndex 属性！！！</p>
+<p>◆正则对象.test()方法——检查是否匹配：用来查看正则表达式与指定的字符串str间是否匹配，匹配返回 true ，否则返回 false ；<br>    RegExp.prototype.test(str);<br>◇String对象.search()方法——检查是否匹配：如果匹配成功，则 search() 返回正则表达式在字符串中首次匹配项的索引；否则，返回 -1；<br>    String.prototype.search(regexp);</p>
+<p>◆正则对象.replace()方法——替换匹配子串：如果匹配模式是RegExp对象时，这个方法在 String.prototype.replace() 的内部调用；<br>    RegExp.prototype<a href="">@@replace</a>;<br>    regexp<a href="str, newSubStr|function">Symbol.replace</a>;<br>◇String对象.replace()方法——替换匹配子串：用一个替换值去替换掉原字符串中一些或所有匹配特定模式的子串，并返回得到的新字符串；<br>                          替换值可以是一个字符串（可以使用特殊变量名）或者一个每次匹配都要调用的函数（用该函数的返回值作为替换值）；<br>                        匹配模式可以是一个字符串（非正则的完整字串，只替换一次）或者一个正则表达式（非全局替换一次，全局替换所有）；<br>  ★注意：该方法并不改变调用它的字符串本身，而只是返回一个新的替换后的字符串！！！<br>    String.prototype.replace(regexp|substr, newSubStr|function);</p>
+<p>◆正则对象.exec()方法——提取匹配子串：在一个指定字符串str中执行一个搜索匹配，并返回一个结果数组或null；<br>  ★注意：返回的数组中只存储了本次找到的匹配项相关信息——包括[0]匹配的全部字符串，[1],…[n]表达式括号中分组所捕获的字符串，index匹配到的字符位于原始字串中基于0的索引位置及input原始字符串；<br>  ★注意：如果本次匹配成功，exec() 方法返回一个结果数组，并更新正则表达式对象的 lastIndex 属性（即下次匹配的起点），返回的数组将完全匹配成功的文本作为第一项，将正则括号里匹配成功的作为数组填充到后面；<br>        如果本次匹配失败，exec() 方法返回 null，同时 lastIndex 属性被重置；<br>    RegExp.prototype.exec(str);<br>◇String对象.match()方法——提取匹配子串：使用一个正则表达式对象regexp来进行搜索匹配，并返回一个包含了整个匹配结果以及任何括号捕获的匹配结果的 Array，如果没有匹配项，则返回 null；<br>  ★注意：非全局匹配时（regexp不含g），会返回和 RegExp.exec() 相同的结果；<br>      而全局匹配时（regexp包含g），返回的数组中则只有每个被匹配或捕获到的子串，而没有其他信息；<br>    String.prototype.match(regexp);</p>
+<p>⒊</p>
+<p>Ⅸ ECMAScript 6新增语法：</p>
+<p>   ■变量声明：<br>    ◆let 命令：ES6新增了 let 命令，用来声明变量。它的用法类似于var ，但是所声明的变量，只在 let 命令所在的代码块内有效；<br>        ·for 循环的计数器，就很合适使用 let 命令来声明：<br>            var a = [];<br>            for (var i = 0; i &lt; 10; i++) {<br>                a[i] = function () {<br>                    console.log(i);<br>                };<br>            }<br>            a<a href="">6</a>; // 10<br>        ★注意：若变量 i 是 var 声明的，则其在全局范围内都有效，所以全局只有一个变量 i ！！！<br>            （每一次循环，变量 i 的值都会发生改变，而循环内被赋给数组 a 的 function 在运行时，会通过闭包读到这同一个变量 i ，导致最后输出的是最后一轮的 i 的值，也就是10）</p>
+<pre><code>        var a = [];
+        for (let i = 0; i &lt; 10; i++) {
+            a[i] = function () {
+                console.log(i);
+            };
+        }
+        a[6](); // ★居然是6★
+    ★注意：若变量 i 是 let 声明的，则当前的 i 只在本轮循环有效，所以每一次循环的 i 其实都是一个新的变量，所以最后输出的是6！！！
+        （JavaScript 引擎内部会记住上一轮循环的值，初始化本轮的变量 i 时，就在上一轮循环的基础上进行计算）
+    ·for 循环还有一个特别之处，就是 整个循环语句 是一个 块级父作用域 ，而 循环体内部 还有一个单独的 子作用域：
+        for (let i = 0; i &lt; 3; i++) {
+            let i = &apos;abc&apos;;
+            console.log(i);            //因为子作用域内找到了变量 i ，所以输出的是子作用域内的 i = &apos;abc&apos;
+        }
+        // abc
+        // abc
+        // abc
+    ·不存在变量提升：
+        ·var 命令会发生“变量提升”现象，即变量可以在声明之前使用，值为 undefined；
+        ·let 命令改变了语法行为，它所声明的变量一定要在声明后使用，否则报错；
+    ·暂时性死区：
+        ·只要块级作用域内存在 let 命令，它所声明的变量就“绑定”（binding）这个区域，不再受外部的 同名变量 影响；
+        ·ES6明确规定，如果区块中存在 let 和 const 命令，则这个区块对这些命令声明的变量，从一开始就形成了封闭作用域，凡是在声明之前就使用这些变量，就会报错；
+        ·所以在代码块内，使用 let 命令声明变量之前，该变量都是不可用的——这在语法上，称为“暂时性死区”（temporal deadzone，简称 TDZ）；
+    ·不允许重复声明：
+        ·let 不允许在相同作用域内，重复声明同一个变量；
+
+◆const 命令：const 声明一个只读的常量，一旦声明，常量的值就不能改变；
+    ·const 声明的变量不得改变值，这意味着， const 一旦声明变量，就必须立即初始化，不能留到以后赋值；
+    ·const 的作用域与 let 命令相同——只在声明所在的块级作用域内有效；
+    ·const 命令声明的常量也是不提升，同样存在暂时性死区，只能在声明的位置后面使用；
+    ·const 声明的常量，也与 let 一样不可重复声明；
+★注意：const 的本质——const 实际上保证的并不是变量的 值 不得改动，而是变量指向的那个 内存地址 不得改动，所以：
+        对于简单类型的数据（数值、字符串、布尔值），值就保存在变量指向的那个内存地址，因此等同于常量；
+        对于复合类型的数据（主要是对象和数组），变量指向的内存地址，保存的只是一个指针， const 只能保证这个指针是固定的，至于它指向的数据结构是不是可变的，就完全不能控制了；
+    因此，将一个对象声明为常量必须非常小心，虽然不能被赋值为另一个对象或者原始值，但是其内的属性值是可以被改变的！！！
+☆注：如果真的想将对象冻结，应该使用 Object.freeze() 方法：
+    const foo = Object.freeze({});
+    // 常规模式时，下面一行不起作用；
+    // 严格模式时，该行会报错
+    foo.prop = 123;
+       除了将对象本身冻结，对象的属性也应该冻结：
+    var constantize = (obj) =&gt; {
+        Object.freeze(obj);
+        Object.keys(obj).forEach( (key, i) =&gt; {
+            if ( typeof obj[key] === &apos;object&apos; ) {
+                constantize( obj[key] );
+            }
+        });
+    };
+</code></pre><p>   ■解构赋值：ES6 允许按照一定模式，从数组和对象中提取值，对变量进行赋值，这被称为解构（Destructuring）；<br>    ·数组的解构赋值：<br>        var [a, b, c] = [1, 2, 3];<br>        let [foo, [[bar], baz]] = [1, [[2], 3]];            //模式匹配——只要等号两边的模式相同，左边的变量就会被赋予对应的值<br>        let [head, …tail] = [1, 2, 3, 4];                //rest参数 tail = [2, 3, 4]<br>        let [x, y, …z] = [‘a’];                    //y = undefined，rest参数 z = []<br>        //如果解构不成功，变量的值就等于 undefined<br>        //其中一种情况是不完全解构，即等号左边的模式，只匹配一部分的等号右边的数组——这种情况下，解构依然可以成功(跳过多余项)<br>    ·对象的解构赋值：<br>        var {x, y, z} = {y:2, x:1, z:3};                //数组的元素是按次序排列的，变量的取值由它的位置决定；而对象的属性没有次序，变量必须与属性同名，才能取到正确的值</p>
+<pre><code>    let obj = { first: &apos;hello&apos;, last: &apos;world&apos; };            //如果 变量名 与 属性名 不一致，必须写成 “属性名:变量名”的形式来进行相应变量的赋值
+    let { first: f, last: l } = obj;                //对象的解构赋值的内部机制，是先找到同名属性，然后再赋给对应的变量，真正被赋值的是后者，而不是前者 f=&apos;hello&apos;,l=&apos;world&apos;
+
+    let obj = {                            //和数组一样，解构也可以用于嵌套结构的对象
+        p: [
+            &apos;Hello&apos;,
+            { y: &apos;World&apos; }
+        ]
+    };
+    let { p: [x, { y }] } = obj;                    //这时 p 是模式，不是变量，因此不会被赋值 x=&quot;Hello&quot;,y=&quot;World&quot;
+·字符串的解构赋值：字符串也可以解构赋值，此时，字符串被转换成了一个类似数组的包装对象，其方式类似于 数组 的解构赋值；
+    const [a, b, c, d, e] = &apos;hello&apos;;                //a=&quot;h&quot;,b=&quot;e&quot;,c=&quot;l&quot;,d=&quot;l&quot;,e=&quot;o&quot;
+    let {length : len} = &apos;hello&apos;;                    //这个类似数组的对象还有一个 length 属性，因此还可以对这个属性解构赋值 len=5
+
+·数值和布尔值的解构赋值：解构赋值时，如果等号右边是数值和布尔值，则会先转为对象，该方式类似于 对象 的解构赋值；
+    let {toString: s} = 123;                    //s === Number.prototype.toString
+    let {toString: s} = true;                    //s === Boolean.prototype.toString
+★注意：解构赋值的规则是，只要等号右边的值不是对象或数组，就先将其转为对象——由于 undefined 和 null 无法转为对象，所以对它们进行解构赋值，都会报错！！！
+·函数参数解构赋值：
+    function([m, n, p] [= [1, 2, 3]]){...}                //数组方式
+    function({m, n, p} [= {...}]){...}                //对象方式
+·圆括号问题：ES6的规则是，只要有可能导致解构的歧义，就不得使用圆括号；
+    ·不得使用圆括号的情况：
+        变量声明语句中，不能带有圆括号；
+        函数参数中，模式不能带有圆括号；
+        赋值语句中，不能将整个模式，或嵌套模式中的一层，放在圆括号之中；
+    ·可以使用圆括号的情况：
+        赋值语句的非模式部分，可以使用圆括号；
+★注意：建议只要有可能，就不要在模式中放置圆括号！！！
+·解构赋值允许指定默认值：
+    let [x, y = &apos;b&apos;] = [&apos;a&apos;];                     // x = &apos;a&apos;, y = &apos;b&apos;
+    let [x, y = &apos;b&apos;] = [&apos;a&apos;, undefined];                // x = &apos;a&apos;, y = &apos;b&apos;
+    function move({x = 0, y = 0} = {}) {                //指定了不存在 x 对应的解构值、不存在 y 对应解构值以及不存在 解构对象 三种情况下的默认值
+        return [x, y];
+    }
+    function move({x, y} = {x:0, y:0}) {                //只是指定了不存在 解构对象 一种情况下的默认值，若有实参对象时 y:0 就不起作用
+        return [x, y];
+    }
+★注意：ES6 内部使用严格相等运算符&quot;===&quot;，判断一个位置是否有值——如果一个数组成员不严格等于 undefined ，默认值是不会生效的，否则即生效！！！
+</code></pre><p>   ■字符串扩展：<br>    ◆includes(),startsWith(),endsWith()方法：<br>        string.includes(‘…’, start);                        //返回布尔值，表示是否找到了参数字符串，从 start 开始<br>        string.startsWith(‘…’, start);                    //返回布尔值，表示参数字符串是否在源字符串的头部，从 start 开始<br>        string.endsWith(‘…’, end);                        //返回布尔值，表示参数字符串是否在源字符串的尾部，到 end 为止<br>    ◆repeat()方法：<br>        string.repeat(n)                            //该方法返回一个新字符串，表示将原字符串重复 n 次<br>    ◆模版字符串<code>：模板字符串(template string)是增强版的字符串，用反引号</code>标识，既可以当作普通字符串使用，也可以用来定义多行字符串，或者在字符串中嵌入变量和表达式；<br>    ·与’’或””混用：<br>        <code>In JavaScript &#39;\n&#39; is a &quot;line-feed&quot;.</code><br>    ·允许换行符：<br>        var str = <code>this is a
+        test string</code>;<br>    ·解析变量或表达式：<br>        var str = <code>...${expression}...</code>;</p>
+<p>   ■数组的扩展：<br>    ◆Array.from() 方法：用于将两类对象转为真正的数组——类似数组的对象(array-like object)和可遍历(iterable)的对象(包括ES6新增的数据结构Set和Map)；<br>        ·如果参数是一个真正的数组， Array.from 会返回一个一模一样的新数组；<br>        ·只要是部署了 Iterator 接口的数据结构， Array.from 都能将其转为数组；<br>        ★扩展运算符 “…” 也可以将某些数据结构转为数组：<br>            var args = […arguments];                    //调用遍历器接口(Symbol.iterator)，如果一个对象没有部署这个接口，就无法转换<br>        ·Array.from 方法则还支持类似数组的对象——所谓类似数组的对象，本质特征只有一点，即必须有 length 属性；<br>            Array.from({ length: 3 });                    //任何有length 属性的对象，都可以通过Array.from 方法转为数组，而此时扩展运算符就无法转换<br>            //[ undefined, undefined, undefined]<br>        ·常见的类似数组的对象是 DOM 操作返回的 NodeList 集合，以及函数内部的 arguments 对象；<br>        ·Array.from 还可以接受第二个参数，作用类似于数组的 map 方法，用来对每个元素进行处理，将处理后的值放入返回的数组；<br>            Array.from(arrayLike, x =&gt; x <em> x);<br>            // 等同于<br>            Array.from(arrayLike).map(x =&gt; x </em> x);</p>
+<pre><code>◆Array.of() 方法：用于将一组值，转换为数组；
+    ·添加该方法主要为了弥补数组构造函数 Array() 的不足——参数个数的不同，会导致该方法的行为有差异：
+        Array();                            // []，没有参数 时，创建一个 空数组
+        Array(3);                            // [, , ,]，一个参数 时，指定数组的 长度
+        Array(3, 11, 8);                        // [3, 11, 8]，两个及以上的参数时，返回由参数组成的新数组
+    ·Array.of 基本上可以用来替代 Array() 或 new Array() ；
+    ·不存在由于参数不同而导致的重载；
+    ·Array.of 的行为非常统一：
+        ·总是返回参数值组成的数组；
+        ·如果没有参数，就返回一个空数组；
+
+◆copyWithin() 方法：在当前数组内部，将指定位置的成员复制到其他位置（会覆盖该位置的原有成员），然后返回当前数组。
+    ·target（必需）：从该位置开始替换数据；
+    ·start（可选）：从该位置开始读取数据，默认为 0 ；如果为 负值，表示倒数；
+    ·end（可选）：到该位置前停止读取数据，默认等于 数组长度；如果为 负值，表示倒数；
+    ·这三个参数都应该是数值，如果不是，会自动转为数值；
+    Array.prototype.copyWithin(target, start = 0, end = this.length);    //复制范围是 [start, end)
+★注意：使用这个方法时会修改当前数组！！！
+
+◆find() 和 findIndex() 方法：
+    ·find() 方法，用于找出第一个符合条件的数组成员；
+        ·参数是一个回调函数，所有数组成员会依次执行该回调函数，直到找出第一个返回值为true 的成员，然后返回该成员；
+        ·如果没有符合条件的成员，则返回 undefined；
+        ·find() 方法的回调函数最多可以接受三个参数，依次为当前的值、当前的位置和原数组；
+    ·findIndex() 方法，与 find() 用法非常类似，返回第一个符合条件的数组成员的位置，如果所有成员都不符合条件，则返回-1；
+    ·这两个方法都可以接受第二个参数，用来绑定回调函数的 this 对象；
+    ·这两个方法都可以发现 NaN ，弥补了数组的 indexOf() 方法的不足；
+
+◆fill() 方法：使用给定值填充一个数组；
+    ·fill() 方法用于空数组的初始化非常方便，数组中已有的元素会被全部抹去；
+    ·fill() 方法还可以接受 第二个 和 第三个 参数，用于指定填充的起始位置和结束位置；
+    Array.prototype.fill(value, start = 0, end = this.length);        //填充范围是 [start, end)
+
+◆entries(), keys() 和 values() 方法：用于遍历数组；
+    ·都返回一个遍历器对象，可以用 for...of 循环进行遍历；
+    ·keys() 是对键名的遍历；
+    ·values() 是对键值的遍历；
+    ·entries() 是对键值对的遍历；
+
+◆includes() 方法：返回一个布尔值，表示某个数组是否包含给定的 值，与字符串的 includes() 方法类似；
+    ·第二个参数表示搜索的起始位置，默认为 0 ；
+    ·如果第二个参数为 负数，则表示倒数的位置，但如果这时它大于数组长度（比如第二个参数为-4，但数组长度为3），则会重置为从0开始；
+
+◆数组的空位：数组的空位 指数组的某一个位置没有任何值；
+★注意：空位不是 undefined ，一个位置的值等于 undefined ，那它依然是“有值的”；而空位是“没有”任何值的， in 运算符可以说明这一点！！！
+    ·ES5 对空位的处理很不一致，大多数情况下会忽略空位：
+        ·forEach() , filter() , every() 和 some() 都会跳过空位；
+        ·map() 会跳过空位，但会保留这个值；
+        ·join() 和 toString() 会将空位视为 undefined ，而 undefined 和 null 会被处理成空字符串；
+    ·ES6 则是明确将空位转为 undefined ；
+</code></pre><p>   ■函数的扩展：<br>    ◆函数参数的默认值：<br>    ◆rest参数：<br>    ◆扩展运算符…：<br>    ◆严格模式：<br>        ‘use strict’;<br>    ◆name 属性：<br>    ◆箭头函数：<br>    ◆绑定this：<br>    ◆尾调用优化：<br>    ◆函数参数的尾逗号；</p>
+<p>   ■对象的扩展：</p>
+<p>   ■Promise 对象：<br>    ◆Promise 的含义：<br>        ·Promise 是异步编程的一种解决方案，比传统的解决方案——回调函数和事件——更合理和更强大；<br>        ·Promise 最早由社区提出和实现，ES6 将其写进了语言标准，统一了用法，原生提供了 Promise 对象；<br>        ·Promise 简单说就是一个容器，里面保存着某个未来才会结束的事件（通常是一个异步操作）的结果，从语法上说，Promise 是一个对象，从它可以获取异步操作的消息；<br>        ·Promise 提供统一的 API，各种异步操作都可以用同样的方法进行处理；<br>    ◆Promise 的特点：<br>        ·对象的状态不受外界影响——Promise 对象代表一个异步操作，有三种状态： Pending（进行中）、Resolved（已完成，又称 Fulfilled）和 Rejected（已失败），而只有异步操作的结果，可以决定当前是哪一种状态，任何其他操作都无法改变这个状态；<br>          这也是 Promise 这个名字的由来，它的英语意思就是“承诺”，表示其他手段无法改变！！！<br>        ·一旦状态改变，就不会再变，任何时候都可以得到这个结果—— Promise 对象的状态改变，只有两种可能：从 Pending 变为 Resolved 和从 Pending 变为 Rejected ；<br>          只要这两种情况发生，状态就凝固了，不会再变了，会一直保持这个结果；这与事件（Event）完全不同，事件的特点是，如果你错过了它，再去监听，是得不到结果的；<br>    ◆基本用法：<br>        ·ES6规定，Promise 对象是一个构造函数，用来生成 Promise 实例；<br>          ·Promise 构造函数接受一个 函数 作为参数，该函数的两个参数分别是 resolve 和 reject ——它们是两个函数，由 JavaScript 引擎提供，不用自己部署；<br>          ·resolve 函数的作用是——将 Promise 对象的状态从“未完成”变为“成功”（即从 Pending 变为 Resolved ），应在异步操作成功时调用，并将异步操作的结果 data，作为参数传递出去；<br>          ·reject 函数的作用是——将 Promise 对象的状态从“未完成”变为“失败”（即从 Pending 变为 Rejected ），应在异步操作失败时调用，并将异步操作报出的错误 error，作为参数传递出去；<br>            var promise = new Promise(function(resolve, reject) {<br>                // … some async code<br>                if (/<em> 异步操作成功 </em>/){<br>                    resolve(value);<br>                } else {<br>                    reject(error);<br>                }<br>            });<br>        ·Promise 实例生成以后，可以用 then 方法分别指定 Resolved 状态和 Reject 状态的回调函数；<br>          ·then 方法可以接受两个回调函数作为参数，第一个回调函数是 Promise 对象的状态变为 Resolved 时调用，第二个回调函数是 Promise 对象的状态变为 Reject 时调用；<br>          ·其中，第二个函数是可选的，不一定要提供；<br>          ·这两个函数都分别接受 Promise 对象成功或失败时传出的值作为参数；<br>            promise.then(function(data) {<br>                // success<br>            }, function(error) {<br>                // failure<br>            });<br>    ◆Promise对象API：<br>        ·Promise.prototype.then()：为 Promise 实例添加 状态改变 时的回调函数；<br>            Promise.prototype.then((data)=&gt;{…}, (error)=&gt;{…});<br>            ·then 方法的第一个参数是 Resolved 状态的回调函数，第二个参数（可选）是 Rejected 状态的回调函数；<br>            ·then 方法返回的是一个新的 Promise 实例（★注意：并不是原来那个 Promise 实例！！！）——因此可以采用链式写法，即 then 方法后面再调用另一个 then 方法；<br>            ·then 方法的返回值若不是 Promise 实例对象时，会被自动转换为 Promise 对象；<br>        ·Promise.prototype.catch()：catch 方法是 .then(null, rejection) 的别名，用于指定发生错误时的回调函数；<br>            Promise.prototype.catch((error)=&gt;{…});<br>            ·Promise 对象的错误具有“冒泡”性质，会一直向后传递，直到被捕获为止——也就是说，错误总是会被下一个最近的 catch 语句捕获；<br>            ·跟传统的 try/catch 代码块不同的是，如果没有使用 catch 方法指定错误处理的回调函数，Promise对象抛出的 错误 不会传递到外层代码——即不会有任何反应；<br>            ·因此，建议总是使用 catch 方法来代替在 then 方法中设置第二个参数，因为这种写法可以捕获前面 then 方法执行中的错误！！！<br>        ·Promise.all()：Promise.all 方法用于将多个 Promise 实例，包装成一个新的 Promise 实例；<br>            var p = Promise.all([p1, p2, p3]);<br>            ·Promise.all 方法接受一个数组作为参数， p1 、p2 、p3 都是 Promise 对象的实例，如果不是，就会先调用下面的 Promise.resolve 方法，将参数转为 Promise 实例，再进一步处理；<br>            ·只有 p1 、p2 、p3 的状态都变成 fulfilled， p 的状态才会变成 fulfilled ，此时 p1 、p2 、p3 的返回值组成一个数组，传递给 p 的回调函数；<br>            ·只要 p1 、p2 、p3 之中有一个被 rejected ， p 的状态就变成 rejected ，此时第一个被 reject 的实例的返回值，会传递给 p 的回调函数；<br>        ·Promise.race()：Promise.race 方法同样是将多个 Promise 实例，包装成一个新的Promise实例；<br>            var p = Promise.race([p1, p2, p3]);<br>            ·只要 p1 、p2 、p3 之中有一个实例率先改变状态， p 的状态就跟着改变，而那个率先改变的 Promise 实例的返回值，就传递给 p 的回调函数；<br>            ·Promise.race 方法的参数与 Promise.all 方法一样，如果不是 Promise 实例，就会先调用下面的 Promise.resolve 方法，将参数转为 Promise 实例，再进一步处理；<br>        ·Promise.resolve()：将现有对象转为 Promise 对象；<br>            ·参数是一个 Promise 实例，那么Promise.resolve 将不做任何修改、原封不动地返回这个实例；<br>            ·参数是一个 thenable 对象（thenable对象指的是具有 then(resolve,reject) 方法的对象），Promise.resolve 方法会将这个对象转为 Promise 对象，然后就立即执行 thenable 对象的 then 方法；<br>            ·参数不是具有 then 方法的对象，或根本就不是对象，则 Promise.resolve 方法返回一个新的 Promise 对象，状态为 Resolved，所以回调函数会立即执行，而且 Promise.resolve 方法的参数会同时传给该回调函数；<br>            ·不带有任何参数，直接返回一个 Resolved 状态的 Promise 对象；<br>        ·Promise.reject()：Promise.reject(reason) 方法也会返回一个新的 Promise 实例，该实例的状态为 rejected；</p>
+<pre><code>◆两个有用的附加方法：
+    ·done()：Promise 对象的回调链，不管以 then 方法或 catch 方法结尾，要是最后一个方法抛出错误，都有可能无法捕捉到（因为Promise内部的错误不会冒泡到全局），因此可以提供一个 done 方法于回调链的尾端，保证抛出任何可能出现的错误；
+    ·finally()：finally 方法用于指定不管 Promise 对象最后状态如何，都会执行的操作，而它与 done 方法的最大区别，它接受一个普通的回调函数作为参数，该函数不管怎样都必须执行；
+</code></pre><p>   ■Generator 函数：<br>    ◆基本概念：<br>        ·Generator 函数是 ES6 提供的一种异步编程解决方案，语法行为与传统函数完全不同；<br>          ·从语法上，首先可以理解成——Generator 函数是一个状态机，封装了多个内部状态 yield；<br>          ·执行 Generator 函数会返回一个遍历器对象，也就是说——Generator 函数除了状态机，还是一个遍历器对象生成函数；<br>          ·返回的遍历器对象，可以依次遍历 Generator 函数内部的每一个状态；<br>        ·形式上，Generator 函数是一个普通函数，但是有两个特征：一，function 关键字与函数名之间有一个星号；二，函数体内部使用 yield 语句来定义不同的内部状态；<br>        ·Generator 函数的调用方法与普通函数一样，也是在函数名后面加上一对圆括号；不同的是，调用Generator函数后，该函数并不执行，返回的也不是函数运行结果，而是一个指向内部状态的指针对象（遍历器对象Iterator Object）；<br>        ·然后，必须调用遍历器对象的 next 方法，使得指针移向下一个状态，也就是说——每次调用 next 方法，内部指针就从函数头部或上一次停下来的地方开始执行，直到遇到下一个 yield 语句（或 return 语句）为止。换言之，Generator函数是分段执行的，yield 语句是暂停执行的标记，而 next 方法可以恢复执行；<br>    ◆yield语句：由于 Generator 函数返回的遍历器对象，只有调用 next 方法才会遍历下一个内部状态，所以其实提供了一种可以暂停执行的函数——yield 语句就是暂停标志；<br>        ·next方法的运行逻辑：<br>          ·遇到 yield 语句，就暂停执行后面的操作，并将紧跟在 yield 后面的那个表达式的值，作为返回的对象的 value 属性值，以 false 为 done 属性的值，表示遍历还没有结束；<br>          ·下一次调用 next 方法时，再继续往下执行，直到遇到下一个 yield 语句；<br>          ·如果没有再遇到新的 yield 语句，就一直运行到函数结束，直到 return 语句为止，并将 return 语句后面的表达式的值，作为返回的对象的 value 属性值，以 true 为 done 属性的值，表示遍历已经结束；<br>          ·如果该函数没有 return 语句，则返回的对象的 value 属性值为 undefined；<br>    ◆next方法的参数：<br>        ·yield 句本身没有返回值，或者说总是返回 undefined，而 next 方法可以带一个参数，该参数就会被当作★上一个★ yield 语句的返回值；<br>    ◆for…of循环：for(… of func){…} 循环可以自动遍历 Generator 函数时生成的 Iterator 对象，且此时不再需要调用 next 方法；<br>        function <em>foo() {<br>            yield 1;<br>            yield 2;<br>            yield 3;<br>            yield 4;<br>            yield 5;<br>            return 6;<br>        }<br>        for (let v of foo()) {<br>            console.log(v);                        // 1 2 3 4 5<br>        }<br>    ★注意：一旦 next 方法的返回对象的 done 属性为 true 时， for…of 循环就会立即中止，并且不包含对该返回对象执行循环体语句，所以上面代码的 return 语句返回的 6，不包括在for…of 循环之中——即每次先判断 done 的状态再决定是否执行 循环体！！！<br>    ◆Generator 对象API：<br>        ·Generator.prototype.throw()：Generator函数返回的遍历器对象，都有一个 throw 方法，可以在函数体外抛出错误，然后在Generator函数体内捕获；<br>        ·Generator.prototype.return()：Generator函数返回的遍历器对象，还有一个 return 方法，可以返回给定的值，并且终结遍历Generator函数；<br>    ◆yield</em> 语句：<br>        ·如果在 Generator 函数内部，调用另一个 Generator 函数，默认情况下是没有效果的；<br>        ·此时就需要用到 yield* 语句，用来在一个 Generator 函数里面执行另一个 Generator 函数；</p>
+<p>   ■Async 函数：ES2017 标准引入了 async 函数，使得异步操作变得更加方便，async 函数其实就是 Generator 函数的语法糖——async 函数将 Generator 函数的星号(*)替换成 async ，将 yield 替换成 await ，仅此而已；<br>    ◆优点：<br>        ·内置执行器——Generator 函数的执行必须靠执行器，所以才有了 co 模块，而 async 函数自带执行器，也就是说，async 函数的执行，与普通函数一模一样，只要一行；<br>        ·更好的语义——async 和 await ，比起 星号 和 yield ，语义更清楚了；<br>        ·更广的适用性——co 模块约定，yield 命令后面只能是 Thunk 函数或 Promise 对象，而 async 函数的 await 命令后面，可以是 Promise 对象和 原始类型的值；<br>        ·返回值是 Promise——async 函数的返回值是 Promise 对象，这比 Generator 函数的返回值是 Iterator 对象方便多了，用 then 方法指定下一步的操作；<br>    ◆用法：<br>        async function getStockPriceByName(name) {                        //async 表示当前声明的函数是一个异步函数，它的执行过程与普通函数有些许区别<br>            var symbol = await getStockSymbol(name);                    //每当函数体执行到一个 await 语句时，都会暂停下来，等待 await 后面方法返回的 Promise 对象从“未完成”状态转换为“成功”或“失败”，然后返回获得的 data 或 error 对象<br>            var stockPrice = await getStockPrice(symbol);                    //从函数体内部看来，程序“好像”是依次向下同步执行的，但其实在函数外部看来，这依然是一个 异步 过程——当函数第一次 await 暂停时，就开始继续执行当前函数后面的程序了，直到被再次“唤醒”去执行剩余的函数体语句<br>            return stockPrice;                                //async 函数默认会返回一个 Promise 对象（自动转换）<br>        }<br>        getStockPriceByName(‘goog’).then(function (result) {<br>            console.log(result);<br>        });</p>
+<p>⑶DOM（Document Object Model）文档对象模型：</p>
+<pre><code>DOM将整个HTML文档以及其中的标签元素、文本内容、HTML标签属性和标签样式等抽象并封装为一个个的对象或其中属性、方法，而这些对象或属性实质上就是文档中相关内容的编程接口，在JS程序中可以通过对这些
+</code></pre><p>对象的访问操作来控制HTML文档中的相应内容。<br>    在DOM中所有的对象被组织在一个树形结构中，其中的每个对象被称为一个节点，而整个树形结构以一个document对象为根节点，它是对整个HTML文档的抽象封装。所有的节点通过彼此之间的属性相互连接，构成<br>了整个树形结构。</p>
+<p>Ⅰ获取元素节点：<br>①document.getElementById(“id”);        //通过id名获取单个元素，只有document有该方法，返回找到的第一个具有该id的元素节点，没有则返回null<br>②document.getElementsByTagName(“tagName”);    //通过标签名★小写★获取若干个元素，不仅document有该方法（能获取文档中所有该类型的元素），并返回一个包含这些元素的伪数组，若没有则返回空的伪数组<br>  element.getElementsByTagName(“tagName”);    //元素节点也具有该方法（能获取该节点下所有该类型的子元素）<br>③document.getElementsByName(“name”);        //通过name属性获取若干个元素，只有document有该方法，返回一个包含这些元素的伪数组，若没有则返回空的伪数组<br>④document.getElementsByClassName(“class”);    //通过类名获取若干个元素，不仅document有该方法（能获取文档中所有该class名的元素），返回一个包含这些元素的伪数组，若没有则返回空的伪数组<br>  element.getElementsByClassName(“class”);    //元素节点也具有该方法（能获取该节点下所有该class名的子元素）<br>⑤document.querySelector(“selector”);        //通过选择器获取单个元素（类似于CSS选择器——标签、类、ID、交集、并集、属性…）<br>⑥document.querySelectorAll(“selector”);    //通过选择器获取若干个元素，返回伪数组…</p>
+<p>HTML文档的结构：如何获取html/head/title/body标签对象？<br>    ★除了通过document对象或元素对象中的节点查询方法从树形结构中获取这些节点外，还可以直接通过document对象的相应属性来快速获取这些节点对象；<br>    document.documentElement    html标签的对象；<br>    document.head;            head标签的对象；<br>    document.title;            title标签的string值，★注意不是对象★；<br>    document.body;            body标签的对象；</p>
+<p>Ⅱ属性控制：</p>
+<p>⒈属性划分：<br>  普通属性：id, title, src…                            //获取修改方便<br>  特殊属性：href, className, tagName(只读且全大写), innerHTML, innerText…     //获取修改麻烦，需要注意具体方式<br>  表单属性：value, type, disabled, selected, checked…                //表单控件才有，注意其赋值与对应的HTML属性之间的区别<br>  style属性：style对象                                //本身是一个行内样式的接口对象，其属性则是对应行内样式属性的接口（不仅可读——读的是行内style，还可写——修改行内style）<br>    style对象属性                                //其属性值都是string，没有显式设置时的值都是””，命名规则按照驼峰命名法（因为和css不一样，JS标识符不能用”-“）</p>
+<p> ①value、innerHTML、innerText：<br>    value                //可读可写（string），所有带有value属性的标签都可以设置和修改的属性<br>    innerHTML            //可读可写（string），双闭合标签内部的内容(可识别子标签)<br>    innerText            //可读可写（string），双闭合标签内部的内容(不识别子标签)<br>    ★注意：老版本火狐不支持innerText，而是用textContent！！！<br>    ¤兼容¤<br>    function getText(ele){<br>        if(ele.innerText !== undefined){<br>            return ele.innerText;<br>        }else{<br>            return ele.textContent;<br>        }<br>    }<br>    function setText(ele,txt){<br>        if(ele.innerText != undefined){<br>            ele.innerText = txt;<br>        }else{<br>            ele.textContent = txt;<br>        }<br>    }</p>
+<p> ②disabled、selected、checked：<br>    disabled            //可读可写（boolean），这些对应的HTML标签属性不依赖于其属性值，只要该属性名存在于标签中就能起作用，所以其对应的JS属性接口是boolean型，true(或能转化为true)表示存在，false（或””,null,undefined,0,NaN）不存在<br>    selected            //可读可写（boolean），注意对应的HTML属性只控制其默认是否被选中状态，而JS中该属性则对应当前是否被选中状态<br>    checked                //可读可写（boolean），注意对应的HTML属性只控制其默认是否被选中状态，而JS中该属性则对应当前是否被选中状态</p>
+<p> ③style属性操作：和其他属性不一样的地方在于——其他属性值为字符串，而style属性值为对象；<br>         样式少的时候使用，可以设置类样式但不能获取——因为其只和行内式对应交互，而不能获取实际起作用的样式值（即最高优先级）<br>  element.style.cssName = “字符串形式的样式”;</p>
+<p>⒉属性操作：操作HTML元素的相关属性；<br>    a.常用形式：利用HTML属性在DOM对象中的相关属性接口；<br>            DOM对象.属性;            //.后内容作为标识符解析<br>            DOM对象[属性];            //[]中内容作为表达式解析<br>    b.方法形式：    DOM对象.getAttribute(“”);    //获取HTML属性值（返回string）<br>            DOM对象.setAttribute(“”,value);    //设置HTML属性值或添加新属性及值（赋值string），可置空属性值，但无法删除<br>            DOM对象.removeAttribute(“”);    //删除HTML属性名<br>    ★注意：方法形式控制HTML元素的class属性，仍用”class”作为属性名的参数！！！<br>    ★注意：方法形式获取disable等类型的HTML属性，返回值也是string类型，没有属性值则得到的是””，没有属性名时获取null！！！<br>    ★注意：方法形式设置的自定义属性会出现在标签上，而普通形式不会出现在标签上，只是设置在了JS对象上！！！</p>
+<p>Ⅲ访问关系：通过一个节点的某个DOM属性找另外一个节点；</p>
+<p>⒈父节点：<br>    element.parentNode;            //兼容性非常好</p>
+<p>⒉兄弟节点：<br>    element.previousElementSibling;        //前一个元素兄弟节点（跳过非元素的文本节点和注释），IE678不支持<br>    element.nextElementSibling;        //后一个元素兄弟节点（跳过非元素的文本节点和注释），IE678不支持<br>    element.previousSibling;        //前一个兄弟节点（包括非元素的文本节点和注释），IE678支持但指向的是前一个元素节点<br>    element.nextSibling;            //后一个兄弟节点（包括非元素的文本节点和注释），IE678支持但指向的是后一个元素节点<br>    ¤兼容¤<br>    var prev = element.previousElementSibling || element.previousSibling;    //现代浏览器使用前面的，IE678使用后面的<br>    var next = element.nextElementSibling || element.nextSibling;        //现代浏览器使用前面的，IE678使用后面的</p>
+<p>⒊单个子节点：<br>    element.firstElementChild;        //第一个元素子节点（跳过非元素的文本节点和注释），IE678不支持<br>    element.lastElementChild;        //最后一个元素子节点（跳过非元素的文本节点和注释），IE678不支持<br>    element.firstChild;            //第一个子节点（包括非元素的文本节点和注释），IE678支持但指向的是第一个元素子节点<br>    element.lastChild;            //最后一个子节点（包括非元素的文本节点和注释），IE678支持但指向的是最后一个元素子节点<br>    ¤兼容¤<br>    var first = element.firstElementChild || element.firstChild;        //现代浏览器使用前面的，IE678使用后面的<br>    var last = element.lastElementChild || element.lastChild;        //现代浏览器使用前面的，IE678使用后面的</p>
+<p>⒋所有子节点：<br>    element.children;            //所有元素子节点（跳过非元素的文本节点和注释），但IE678不会跳过注释节点<br>    element.childNodes;            //所有子节点（包括非元素的文本节点和注释，一般配合nodeType属性使用），W3C官方推荐</p>
+<p>⒌节点属性：<br>  nodeType                    //节点类型：1-元素节点，2-属性节点，3-文本节点，8-注释节点，9-DOM根节点（document），11-虚节点（DocumentFragment）<br>  nodeName                    //节点名称：大写tagName-元素节点，属性名-属性节点，#text-文本节点，#comment-注释节点，#document-DOM根节点（document）<br>  nodeValue                    //节点值：null-元素节点，属性值-属性节点，文本内容-文本节点，注释内容-注释节点，null-DOM根节点（document）</p>
+<p>Ⅳ节点操作：<br>⒈元素节点创建：<br>    document.write(“…”);<br>    element.innerHTML = …;<br>    document.createElement(“tagName”);<br>    document.createDocumentFragment();        //创建虚节点框，其在页面上不显示自身，常用于缓存批量添加的子节点，以减少页面重绘操作<br>⒉元素节点(新)添加/(旧)移动：<br>    element.appendChild(newElement);<br>    element.insertBefore(newElement, refElement);    //refElement为null或undefined则功能同appendChild方法<br>⒊元素节点删除：<br>    element.removeChild(oldChild);<br>    element.remove();                //等价于element.parentNode.removeChild(element)<br>⒋元素节点复制：<br>    element.cloneNode(deep);            //deep为true则深拷贝，false浅拷贝<br>⒌元素节点替换：<br>    element.replaceChild(newElement, oldChild);</p>
+<p>Ⅵ事件处理：客户端JavaScript程序采用了异步事件驱动编程模型，即它们静待事件发生，然后它们响应并产生事件event。如果JS应用程序关注特定类型的事件，那么它可以注册当这类事件发生时要调用的一个或多个函数。</p>
+<p>⒈事件术语：事件本身并不是一个需要定义的技术名词，简而言之，事件就是Web浏览器通知应用程序发生了什么事情的机制。事件不是JavaScript对象，不会出现在程序源代码中，只会有一些事件相关的对象出现在源代码中。</p>
+<pre><code>①事件类型（event type）：一个用来说明发生什么类型事件的字符串，如“mousemove”、“keydown”、“load”等（不带on开头），实际上就是事件名字；
+
+②事件目标（event target）：发生事件或与之相关的对象，在客户端JavaScript应用程序中，window、document和element对象是最常见的事件目标，但某些事件是由其他类型对象触发；
+★注意：当讲到某一事件时，必须同时指明事件类型和目标！！！
+★注意：在事件对象event中，target属性指向真正引发该事件的目标对象，currentTarget属性则指向该事件当前所传播到的目标对象，其可能是真正目标的某个父元素对象！！！
+
+③事件处理程序或事件监听程序（event handler|event listener）：处理或响应事件的函数，应用程序通过指明事件类型和事件目标，在web浏览器中注册它们的事件处理程序函数；
+
+④事件对象：与特定事件相关且包含有关该事件详细信息的对象，所有的事件对象都有用来指定事件类型的type属性和指定事件真正目标的target属性（★IE678中用srcElement而非target），而且每个事件类型都为其相关
+        事件对象定义一组其他属性，但也有许多事件类型仅定义了像type和target这样少量的标准属性。
+        event.eventPhase        事件当前处于哪个传播阶段：1.捕获，2.目标，3.冒泡；
+        event.timeStamp        事件生成时的时间；
+        event.bubbles        事件是否支持冒泡：true，false；
+        event.button        事件被触发时哪个鼠标按钮被点击；
+        event.pageX            光标相对于当前整个网页的水平坐标；
+        event.pageY            光标相对于当前整个网页的垂直坐标；
+        event.screenX        光标相对于当前屏幕的水平坐标；
+        event.screenY        光标相对于当前屏幕的垂直坐标；
+        event.clientX        光标相对于当前网页在浏览器中可见区域的水平坐标；
+        event.clientY        光标相对于当前网页在浏览器中可见区域的垂直坐标；
+        event.type            事件类型；
+        event.target        事件的真正目标；
+        event.currentTarget        事件当前传播到的目标；
+¤兼容¤
+    event.target ? event.target : event.srcElement;
+★注意：通常浏览器中，事件对象作为参数传递给事件处理程序函数（即带实参调用），但不包括IE678版本，在这些浏览器中仅能通过全局变量event才能得到事件对象！！！
+★注意：谷歌既支持传递event对象作实参，也支持全局变量event；而火狐仅支持传递参数方式！
+
+⑤事件传播：浏览器决定哪个对象触发其事件处理程序的过程；
+        对于单个对象的特定事件必须是不能传播的，如window对象的load事件；
+
+捕获：事件传播的一种形式称为事件捕获，在容器父元素上注册的★特定★处理程序会有机会在事件传播到真实目标之前拦截或“捕获”它（★IE678不支持事件捕获），即当某文档元素上发生了某个类型的事件时，浏览器会从window对象开始依次经过该元素的所有父节点传递该事件，并触发那些注册为“捕获”的事件处理程序函数；
+目标：事件传播到其真正的目标对象；
+冒泡：当文档元素上，发生了某个类型的事件时，它们会在文档树上向上传播或称“冒泡”（bubble），即从事件真实目标开始将该事件依次传递给其所有父元素对象，触发其同类型的且没有设置为“捕获”的事件处理程序函数；
+★注意：在一个事件的完整传播过程当中，所有的事件处理程序函数都会收获到同一个事件对象，不过其中的某些值可能已经改变，例如currentTarget会指向当前传播到的目标对象！！！
+★注意：标准事件模型——捕获阶段｛从window对象开始到直接父元素，捕获阶段父元素只执行“捕获”函数｝——目标阶段｛目标阶段中，事件目标会依次执行所有其注册的该类型事件处理程序函数｝——冒泡阶段｛从直接父元素开始到window对象结束，某些事件（如文档元素的load事件）会在document处停止冒泡而不会传播到window对象，冒泡阶段父元素只执行非“捕获”函数｝！！！
+★注意：事件委托——利用事件传播的“冒泡”过程，在容器父元素上注册单个事件处理程序，以之代替为每个子元素分别设置各自的事件处理程序，父元素程序中可以通过收到的事件对象中事件目标target来
+    确认引生事件的特定子元素，并执行为其设置的相应处理程序。
+
+⑥事件取消：一些事件有与之相关的默认操作，如超链接上click事件时，浏览器默认加载新页面，而事件处理程序可以通过返回一个适当的值、调用事件对象的某个方法或设置事件对象的某个属性来阻止默认操作的发生。
+</code></pre><p>⒉事件类型：</p>
+<p>★★★★事件类型总结：<br>    ◎标准事件◎<br>    事件名称        事件类型        规范                触发时机<br>      ◆鼠标|触控：<br>    click            MouseEvent        DOM L3                A pointing device button has been pressed and released on an element.<br>    dblclick        MouseEvent        DOM L3                A pointing device button is clicked twice on an element.</p>
+<pre><code>mouseup            MouseEvent        DOM L3                A pointing device button is released over an element.
+mousedown        MouseEvent        DOM L3                A pointing device button (usually a mouse) is pressed on an element.
+mouseenter        MouseEvent        DOM L3                A pointing device is moved onto the element that has the listener attached.
+mouseleave        MouseEvent        DOM L3                A pointing device is moved off the element that has the listener attached.
+mouseout        MouseEvent        DOM L3                A pointing device is moved off the element that has the listener attached or off one of its children.
+mousemove        MouseEvent        DOM L3                A pointing device is moved over an element.
+mouseover        MouseEvent        DOM L3                A pointing device is moved onto the element that has the listener attached or onto one of its children.
+wheel            WheelEvent        DOM L3                A wheel button of a pointing device is rotated in any direction.
+
+touchstart        TouchEvent        Touch Events            A touch point is placed on the touch surface.
+touchend        TouchEvent        Touch Events            A touch point is removed from the touch surface.
+touchenter        TouchEvent        Touch Events Removed        A touch point is moved onto the interactive area of an element.
+touchleave        TouchEvent        Touch Events Removed        A touch point is moved off the interactive area of an element.
+touchmove        TouchEvent        Touch Events            A touch point is moved along the touch surface.
+touchcancel        TouchEvent        Touch Events            A touch point has been disrupted in an implementation-specific manners (too many touch points for example).
+
+dragstart        DragEvent        HTML5                The user starts dragging an element or text selection.
+drag            DragEvent        HTML5                An element or text selection is being dragged (every 350ms).
+dragend            DragEvent        HTML5                A drag operation is being ended (by releasing a mouse button or hitting the escape key).
+dragenter        DragEvent        HTML5                A dragged element or text selection enters a valid drop target.
+dragover        DragEvent        HTML5                An element or text selection is being dragged over a valid drop target (every 350ms).
+dragleave        DragEvent        HTML5                A dragged element or text selection leaves a valid drop target.
+drop            DragEvent        HTML5                An element is dropped on a valid drop target.
+
+select            UIEvent            DOM L3                Some text is being selected.
+☆清除鼠标拖动元素时选中的文字区域：
+window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
+
+  ◆键盘：
+keydown            KeyboardEvent        DOM L3                A key is pressed down.
+keypress        KeyboardEvent        DOM L3                A key is pressed down and that key normally produces a character value (use input instead).
+keyup            KeyboardEvent        DOM L3                A key is released.
+
+  ◆焦点：
+focus            FocusEvent        DOM L3                An element has received focus (does not bubble).
+blur            FocusEvent        DOM L3                元素失去焦点 （不会冒泡）
+change            Event            DOM L2, HTML5            An element loses focus and its value changed since gaining focus.
+
+  ◆AJAX：
+readystatechange    Event            HTML5 and XMLHttpRequest    The readyState attribute of a document has changed.
+timeout            ProgressEvent        XMLHttpRequest     
+
+  ◆剪切板：
+copy            ClipboardEvent        Clipboard            The text selection has been added to the clipboard.
+cut            ClipboardEvent        Clipboard            The text selection has been removed from the document and added to the clipboard.
+paste            ClipboardEvent        Clipboard            Data has been transfered from the system clipboard to the document.
+
+  ◆载入：
+load            UIEvent            DOM L3                A resource and its dependent resources have finished loading.
+beforeunload        BeforeUnloadEvent    HTML5                即将卸载 window，document 及其资源
+unload            UIEvent            DOM L3                The document or a dependent resource is being unloaded.
+
+load            ProgressEvent        Progress and XMLHttpRequest    Progression has been successful.
+loadstart        ProgressEvent        Progress and XMLHttpRequest    Progress has begun.
+loadend            ProgressEvent        Progress and XMLHttpRequest    Progress has stopped (after &quot;error&quot;, &quot;abort&quot; or &quot;load&quot; have been dispatched).
+
+abort            UIEvent            DOM L3                资源载入已被中止
+abort            ProgressEvent        Progress and XMLHttpRequest    Progress 被终止(不是error造成的)
+abort            Event            IndexedDB            事务已被中止
+
+  ◆表单：
+reset            Event            DOM L2,HTML5            A form is reset.
+submit            Event            DOM L2,HTML5            A form is submitted.
+
+input            Event            HTML5                The value of an element changes or the content of an element with the attribute contenteditable is modified.
+invalid            Event            HTML5                A submittable element has been checked and doesn&apos;t satisfy its constraints.
+
+  ◆窗口：
+resize            UIEvent            DOM L3                The document view has been resized.
+scroll            UIEvent            DOM L3                The document view or an element has been scrolled.
+
+  ◆动画：
+animationstart        AnimationEvent        CSS Animations            一个CSS 动画已开始
+animationend        AnimationEvent        CSS Animations            完成一个CSS 动画 
+animationiteration    AnimationEvent        CSS Animations            重复播放一个CSS 动画
+
+transitionend        TransitionEvent        CSS Transitions            A CSS transition has completed.
+
+  ◆多媒体：
+audiostart        Event            Web Speech API            用户代理开始捕捉用以语音识别的音频
+audioend        Event            Web Speech API            用户代理捕捉到用以语音识别的音频
+audioprocess        AudioProcessingEvent    Web Audio API            一个ScriptProcessorNode 的输入缓冲区可处理
+
+canplay            Event            HTML5 media            The user agent can play the media, but estimates that not enough data has been loaded to play the media up to its end without having to stop for further buffering of content.
+canplaythrough        Event            HTML5 media            The user agent can play the media, and estimates that enough data has been loaded to play the media up to its end without having to stop for further buffering of content.
+durationchange        Event            HTML5 media            The duration attribute has been updated.
+emptied            Event            HTML5 media            The media has become empty; for example, this event is sent if the media has already been loaded (or partially loaded), and theload() method is called to reload it.
+ended            Event            HTML5 media            Playback has stopped because the end of the media was reached.
+play            Event            HTML5 media            Playback has begun.
+pause            Event            HTML5 media            Playback has been paused.
+playing            Event            HTML5 media            Playback is ready to start after having been paused or delayed due to lack of data.
+ratechange        Event            HTML5 media            The playback rate has changed.
+seeked            Event            HTML5 media            A seek operation completed.
+seeking            Event            HTML5 media            A seek operation began.
+suspend            Event            HTML5 media            Media data loading has been suspended.
+timeupdate        Event            HTML5 media            The time indicated by thecurrentTime attribute has been updated.
+volumechange        Event            HTML5 media            The volume has changed.
+waiting            Event            HTML5 media            Playback has stopped because of a temporary lack of data.
+stalled            Event            HTML5 media            The user agent is trying to fetch media data, but data is unexpectedly not forthcoming.
+loadeddata        Event            HTML5 media            The first frame of the media has finished loading.
+loadedmetadata        Event            HTML5 media            The metadata has been loaded.
+
+  ◆网络：
+offline            Event            HTML5 offline            The browser has lost access to the network.
+online            Event            HTML5 offline            The browser has gained access to the network (but particular websites might be unreachable).
+
+  ◆其他：
+afterprint        Event            HTML5                相关文档已开始打印或打印预览已被关闭
+beforeprint        Event            HTML5                相关文档将要开始打印或准备打印预览
+
+devicelight        DeviceLightEvent    Ambient Light Events        Fresh data is available from a light sensor.
+devicemotion        DeviceMotionEvent    Device Orientation Events    Fresh data is available from a motion sensor.
+deviceorientation    DeviceOrientationEvent    Device Orientation Events    Fresh data is available from an orientation sensor.
+deviceproximity        DeviceProximityEvent    Proximity Events        Fresh data is available from a proximity sensor (indicates an approximated distance between the device and a nearby object).
+
+downloading        Event            Offline                The user agent has found an update and is fetching it, or is downloading the resources listed by the cache manifest for the first time.
+
+endEvent        TimeEvent        SVG                A SMIL animation element ends.
+SVGAbort        SVGEvent        SVG                Page loading has been stopped before the SVG was loaded.
+SVGError        SVGEvent        SVG                An error has occurred before theSVG was loaded.
+SVGLoad            SVGEvent        SVG                An SVG document has been loaded and parsed.
+SVGResize        SVGEvent        SVG                An SVG document is being resized.
+SVGScroll        SVGEvent        SVG                An SVG document is being scrolled.
+SVGUnload        SVGEvent        SVG                An SVG document has been removed from a window or frame.
+SVGZoom            SVGZoomEvent        SVG                An SVG document is being zoomed.
+repeatEvent        TimeEvent        SVG                A SMIL animation element is repeated.
+
+fullscreenchange    Event            Full Screen            An element was turned to fullscreen mode or back to normal mode.
+fullscreenerror        Event            Full Screen            It was impossible to switch to fullscreen mode for technical reasons or because the permission was denied.
+
+hashchange        HashChangeEvent        HTML5                The fragment identifier of the URL has changed (the part of the URL after the #).
+
+storage            StorageEvent        Web Storage            A storage area (localStorage orsessionStorage) has changed.
+
+pagehide        PageTransitionEvent    HTML5                A session history entry is being traversed from.
+pageshow        PageTransitionEvent    HTML5                A session history entry is being traversed to.
+popstate        PopStateEvent        HTML5                A session history entry is being navigated to (in certain cases).
+
+visibilitychange    Event                            Page visibility    The content of a tab has become visible or has been hidden.
+</code></pre><p>⒊事件注册：<br>    注册事件处理程序有两种基本方式：<br>    ◇第一种方式出现在Web初期，即给JS事件目标对象或HTML文档元素设置事件属性：<br>        ①设置HTML标签元素的事件属性：HTML中事件属性名是加on开头的事件名，其中不区分大小写；<br>        ②设置JavaScript元素节点对象的事件属性：JS中事件属性名是加on开头的事件名，其中区分大小写，所以必须为对应的小写；<br>          在这种方式中，可以通过设置事件属性的值为null来删除注册的事件处理程序；<br>    ★注意：虽然每个HTML标签元素的事件属性，在其对应的JS元素对象中都有一个相应的事件属性作为编程接口，但这两个属性却是完全不同的——HTML中的事件属性接受的是一个字符串程序代码（其执行环境类似于将代码放入function(event){with(document){with(this.form||{}){with(this){code}}}}，然后将此匿名函数传给其接口对象去调用），<br>        而JS中的事件属性却必须接受一个函数对象作为处理程序！！！<br>    ★注意：再次体会，编程接口的工作方式可能与其参照体有所不同！！！<br>    ★注意：设置JS对象中的事件属性，会导致覆盖掉相应的HTML元素中的相同事件属性上的设置！<br>        另外，通过JS事件属性设置的处理程序最多只能有一个，即多次重复设置会产生覆盖！！<br>    ◇第二种方式更新更通用，即将事件处理程序函数传递给目标对象的一个事件注册方法：<br>        ③通过元素节点对象调用addEventListener(事件类型,监听程序,useCapture)方法（谷歌/火狐/IE9+）：★注意★事件类型一定要是没有on开头的事件名，且其中区分大小写！！！布尔值useCapture指定<br>        该监听程序是否注册为“捕获”阶段的执行函数，默认值为false。<br>          在这种方式中，可以用removeEventListener(事件类型,监听程序,useCapture)方法来删除注册的事件处理程序；<br>    ★注意：在谷歌/火狐/IE9+中，事件监听方式与事件属性方式共享同一事件绑定队列，当通过事件属性绑定执行函数时，先去除队列中原有的该属性名绑定的函数，再添加新的绑定函数进入队列；而通过事件<br>        监听绑定执行函数时，先检查该函数是否已绑定过该事件及其是否捕获时执行，若没有绑定过或执行方式不同则添加新的绑定到队列中，若已经绑定过了且执行方式相同就跳过（即不改变原有执行顺序）。<br>        ④通过元素节点对象调用attachEvent(事件类型，监听程序)方法（IE678）：事件类型是加on开头的事件名，且区分大小写，IE678只支持目标和冒泡阶段，而没有捕获阶段；<br>          在这种方式中，可以用detachEvent(事件类型,监听程序)方法来删除注册的事件处理程序；<br>    ★注意：在IE678中，事件监听方式将绑定的事件名与执行函数放入一个栈中，这些函数都无法选择在捕获阶段执行，其执行时this绑定的是全局对象，而且允许相同的事件处理程序函数注册多次，事件发生时调用的次数即为注册过的次数；<br>        通过事件属性方式绑定的执行函数总是先于栈中函数的执行，其执行时this绑定调用函数的目标对象。<br>    ★注意：两种事件监听方式都不会覆盖事件属性方式绑定的处理程序！！！<br>    ¤兼容¤<br>        function addEvent(element, event, function){<br>            //if(element.addEventListener &amp;&amp; typeof element.addEventListener === “function”){<br>            //if(element.addEventListener != undefined){<br>            if(element.addEventListener){<br>                element.addEventListener(event, function);<br>            }else if(element.attachEvent){<br>                element.attachEvent(“on” + event, function);<br>            }else{<br>                element[“on” + event] = function;<br>            }<br>        }<br>        function removeEvent(element, event, function){<br>            //if(element.removeEventListener &amp;&amp; typeof element.removeEventListener === “function”){<br>            //if(element.removeEventListener != undefined){<br>            if(element.removeEventListener){<br>                element.removeEventListener(event, function);<br>            }else if(element.detachEvent){<br>                element.detachEvent(“on” + event, function);<br>            }else{<br>                element[“on” + event] = null;<br>            }<br>        }<br>    ★★★注意：解绑/删除事件监听方式注册的事件处理程序函数时，必须要事先保存注册时的那个函数对象到某一变量或对象的属性中，而解绑时必须使用注册时传递的同一个函数对象！！！</p>
+<p>⒋事件调用：<br>    ①事件处理程序的参数：<br>        通常，在谷歌、火狐和IE9+中，调用事件处理程序时把事件对象作为它们的一个参数传递，由事件对象的属性提供有关事件的详细信息；<br>        然而，在IE678中，当调用注册的事件处理程序时并未传递事件对象，取而代之的是，要通过全局对象window.event来获得事件对象；<br>        另外，当通过设置HTML属性注册事件处理程序时，浏览器会把JS代码转换到如下的一个函数中，其中非IE678浏览器使用event参数来构造函数，而IE678在构造函数时没有参数；<br>            function (event){with(document){with(this.form||{}){with(this){JScode}}}}<br>            function (){with(document){with(this.form||{}){with(this){JScode}}}}<br>    ¤兼容¤<br>        function (event){event = event || window.event;…}</p>
+<pre><code>②事件处理程序的运行环境：
+    通过事件属性或addEventListener方法注册的事件处理程序是在事件目标上定义的，所以它们作为这个对象的方法来调用，即程序中this指向事件目标本身；
+    通过attachEvent方法注册的事件处理程序是作为普通函数来调用，即其程序中this指向全局对象window（可以通过call方法转变this指向）；
+
+③事件处理程序的作用域：
+    事件处理程序函数的外部作用域是其定义时的作用域，而非调用时的作用域，并且它们能存取那个作用域中的任何一个本地变量；
+    然而，通过HTML事件属性来注册的事件处理程序是一串代码，而非函数。它们被转换到一个能存取全局变量的顶级函数中而非任何本地作用域，并且它们运行在一个修改后的作用域链中——通过HTML属性
+    定义的事件处理程序能好像本地变量一样使用目标对象、容器form对象（如果有）和document对象的属性。
+
+④事件处理程序的返回值：
+    通过JS对象事件属性或HTML事件属性注册的事件处理程序，其返回值有时是非常有意义的，通常返回值为false就是告诉浏览器不要执行这个事件相关的默认操作。例如，表单提交按钮的onclick事件若返回
+    false就能阻止浏览器提交表单；输入域上的onkeypress事件处理程序能通过返回false来过滤键盘输入；window对象的onbeforeunload（发生在页面卸载unload事件之前）事件处理程序的返回值若是一个字
+    符串，那么它将出现在确认离开当前页面的询问对话框中。
+★★★★注意：事件处理程序的返回值，只在通过属性注册的处理程序中才有意义，这一点非常重要！！！
+    通过addEventListener方法或attachEvent方法注册的事件处理程序中，则必须调用preventDefault方法或设置事件对象的returnValue属性来阻止默认操作。
+
+⑤事件取消：
+    取消默认操作：
+        通过属性注册——返回false；
+        通过addEventListener方法注册——调用event.preventDefault()方法；
+        通过attachEvent方法注册——设置event.returnValue = false；
+¤兼容¤
+    function (event){
+        event = event || window.event;
+        ...
+        if(event.preventDefault)event.preventDefault();
+        if(event.returnValue)event.returnValue = false;
+        return false;
+    }
+    取消事件传播：
+        支持addEventListener方法的浏览器：调用event.stopPropagation()方法，可以在事件传播期间的任何时间调用，它能工作在捕获阶段、目标阶段和冒泡阶段，调用该方法并不会阻止当前
+                          目标上还未执行的处理程序，只会阻止传播过程的下一个目标及之后的所有对象上相关程序被调用；
+        支持attachEvent方法的浏览器：设置event.cancelBubble属性为true，只能取消事件冒泡过程；
+¤兼容¤
+    function (event){
+        event = event || window.event;
+        ...
+        if(event.stopPropagation)event.stopPropagation();
+        if(event.cancelBubble)event.cancelBubble = true;
+    }
+</code></pre><p>Ⅴ三大系列：都是DOM中元素节点对象的属性；</p>
+<p>⒈offset系列：<br>    ①offsetWidth/offsetHeight：获取该元素在页面中的整个盒子的宽度和或高度，值为数字类型，不带单位（width/height+padding+border）；<br>    ②offsetTop/offsetLeft：获取相对于该元素向上第一个设置了定位（非static）的父元素的坐标位置（数字类型，不带单位），如果没有父系盒子设置定位，则以整个页面为基准；<br>    ③offsetParent：获取从该元素向上找第一个设置了定位的父系元素对象，如果没有父系盒子设置定位，则该属性指向body标签的对象；</p>
+<p>⒉scroll系列：<br>    ①scrollWidth/scrollHeight：获取该元素在页面中包括padding区域在内的宽度或高度，不受border和margin影响，但受超出内容影响（width/height+padding）；<br>    ②scrollTop/scrollLeft：body/html对象的该属性可以获取整个页面被滚动卷曲而看不到的顶部距离/左侧距离（但有兼容性问题：支持通过body还是html对象来获取不统一，谷歌有DTD用html，无DTD用body，IE只支持html），<br>                其他对象的该属性可以获取该对象中的内容区或子元素被卷曲到顶部或左侧的距离（必须在设置了滚动条的状态下才起作用，如overflow:scroll或overflow:auto）；<br>    ③window.pageXOffset/window.pageYOffset：为了解决②中的兼容性问题，W3C推荐使用这两个属性来获取整个页面被隐藏的顶部和左侧的距离（IE678不支持）；<br>    ¤兼容1¤<br>        function scroll(){<br>            return {<br>                left : window.pageXOffset || document.documentElement.scrollLeft,<br>                top : window.pageYOffset || document.documentElement.scrollTop<br>            }<br>        }<br>    ¤兼容2¤<br>        function scroll(){<br>            return {<br>                left : document.body.scrollLeft + document.documentElement.scrollLeft,<br>                top : document.body.scrollTop + document.documentElement.scrollTop<br>            }<br>        }</p>
+<p>⒊client系列：<br>    ①clientWidth/clientHeight：html/body对象的该属性可以获取浏览器窗口中页面可视区域的宽度或高度（同样有兼容性问题：支持通过body还是html对象来获取不统一，谷歌有DTD用html，无DTD用body，IE只用html），<br>                    其他对象的该属性可以获取本元素在页面中包括padding区域在内的宽度或高度，不受border/margin或超出内容的影响（width/height+padding）；<br>    ¤兼容¤<br>        function client(){<br>            return {<br>                width: window.innerWidth || document.documentElement.clientWidth,<br>                height: window.innerHeight || document.documentElement.clientHeight<br>            }<br>        }<br>    ②clientTop/clientLeft：获取元素在页面中上border或左border的宽度；<br>    ③window.innerHeight/window.innerWidth：为了解决①中的兼容性问题，W3C推荐使用这两个属性来获取浏览器窗口中页面可视区域的宽度或高度（IE678不支持）；</p>
+<p>⒋获取页面中标签元素的样式属性值：<br>    window.getComputedStyle方法（谷歌/火狐/IE9+）：可以精确获取元素在当前页面中所实际显示的CSS样式属性值（即当前最高优先级的属性值）；<br>        window.getComputedStyle(element[, pseudoElt]);        //element获取属性值的元素对象，pseudoElt伪元素字符串或null，返回一个包含有该元素上所有样式属性的键值对的对象，该对象不是编程接口（只读），其对应实际显示的样式值<br>    ★注意：元素节点对象的style属性也是一个包含了该元素上所有样式属性键值对的对象，不过该对象是一个编程接口（可读/写），可以用来修改元素的样式值，但其对应的只是行内样式中的属性值！！！<br>    currentStyle属性（IE678）：<br>        element.currentStyle;                    //该属性是一个对象<br>    ¤兼容¤<br>        function getCurrentStyle(element, attribute){<br>            //if(window.getComputedStyle &amp;&amp; typeof window.getComputedStyle === “funciton”){<br>            //if(window.getComputedStyle != undefined){<br>            if(window.getComputedStyle){<br>                return window.getComputedStyle(element, null)[attribute];<br>            }else{<br>                return element.currentStyle[attribute];<br>            }<br>        }</p>
+<p>⒌事件对象中的位置属性：<br>    ①pageX/pageY：获取光标在当前整个页面中的坐标（IE678不支持，可以用在可视区域的坐标加上页面被卷曲隐藏的部分来代替）；<br>    ¤兼容¤<br>        function pageMouse(){<br>            return {<br>                pageX = event.pageX || event.clientX + document.documentElement.scrollLeft,<br>                pageY = event.pageY || event.clientY + document.documentElement.scrollTop<br>            };<br>        }<br>    ②screenX/screenY：获取光标在当前整个屏幕中的坐标；<br>    ③clientX/clientY：获取光标在当前浏览器窗口页面可视区域的坐标；<br>    ④offsetX/offsetY：获取光标在当前事件目标元素内的坐标；</p>
+<p>ⅥJQuery类库：JQuery是一个JS的工具包(特别大，功能强)，里面封装了很多功能和方法，方便我们开发；兼容很多浏览器(IE678不用再做兼容了)；</p>
+<p>JQuery的特点：<br>a.优点：连式编程和隐式迭代;<br>        连式编程——$(“div”).css().show().hide();<br>        隐式迭代——内部自动带有for循环；<br>b.缺点：代码冗余(很多方法实现统一功能)；</p>
+<p>入口函数(window.onload)：<br>①$( function (){ console.log($(“div”)); });<br>②$( document ).ready( function (){ console.log($(“div”)); });<br>③$( window ).ready( function (){ console.log($(“div”)); });</p>
+<p>④jQuery( function (){ console.log($(“div”)); });<br>⑤jQuery( document ).ready( function (){ console.log($(“div”)); });<br>⑥jQuery( window ).ready( function (){ console.log($(“div”)); });</p>
+<p>⑦$( window ).load( function (){ console.log($(“div”)); });<br>⑧jQuery( window ).load( function (){ console.log($(“div”)); });</p>
+<p>jQuery和$都是设在window中的属性，默认情况下两者是指向同一函数对象（非构造器，但其构造原型是返回的jQuery封装对象的实例原型）；</p>
+<p>jQuery封装对象(简称jQuery对象)，就是一个特殊的伪数组，包含很多属性和DOM对象，实例原型为jQuery.prototype；</p>
+<p>区分DOM对象与jQuery对象——获取方式不同，且分别含有不同的属性与方法！！！</p>
+<p>DOM对象和jQuery对象的相互转换：<br>①DOM对象转换成jQuery对象：    $(element);<br>                $(eleArray);<br>②jQuery对象转换成DOM对象：    $(“div”)[index];<br>                $(element).get(index);</p>
+<p>选择器：<br>①基本选择器：    id选择器    “#id”<br>        类选择器    “.class”<br>        标签选择器    “tagName”<br>        通配符选择器    “*”<br>        并集选择器    “selector1,selector2”<br>        交集选择器    “selector1selector2”<br>②层级选择器：    后代选择器    “selector1 selector2”<br>        子代选择器    “selector1&gt;selector2”<br>③过滤选择器：    索引值选择器    “:eq(…)”<br>        奇数索引选择器    “:odd”<br>        偶数索引选择器    “:even”<br>        差集选择器    “:not(selector)”</p>
+<p>css方法：    jQuery对象.css(“border”)    获取作用在盒子上的最高权限属性值——window.getComputedStyle()<br>        jQuery对象.css(“width”,”300px”)    设置一个属性<br>        jQuery对象.css(json对象)    设置多个属性</p>
+<p>访问关系：<br>    .find()方法——后代元素（子子孙孙）；<br>        $(“ul”).find(“li”).css(“background”,”skyblue”);<br>        $(“ul”).find().css(“background”,”skyblue”);//什么都不写，不会获取任何元素;</p>
+<pre><code>.children()方法——直接子元素（亲儿子元素）；
+    $(&quot;ul&quot;).children(&quot;li&quot;).css(&quot;background&quot;,&quot;yellowgreen&quot;);
+    $(&quot;ul&quot;).children().css(&quot;background&quot;,&quot;yellowgreen&quot;);//不写，获取所有子元素;
+
+.parent()方法——直接父元素；
+    console.log($(&quot;#box&quot;).parent());//不写找亲爹;
+    console.log($(&quot;#box&quot;).parent(&quot;ol&quot;));//写找亲爹;
+    console.log($(&quot;#box&quot;).parent(&quot;ul&quot;));//写错了，找不到;
+
+.eq()方法——根据索引值找元素(返回的是jQuery对象)；
+    $(&quot;.box&quot;).eq(0).css(&quot;background&quot;,&quot;red&quot;);
+
+
+.siblings()方法——所有的兄弟节点；
+    $(&quot;#box&quot;).siblings(&quot;li&quot;).css(&quot;background&quot;,&quot;red&quot;);
+    $(&quot;#box&quot;).siblings().css(&quot;background&quot;,&quot;red&quot;);//不指定获取所有兄弟节点;
+
+.next()方法
+.prev()方法
+.frist()方法
+.last()方法
+.prevAll()方法
+.nextAll()方法
+    $(&quot;#box&quot;).nextAll(&quot;li&quot;).css(&quot;background&quot;,&quot;red&quot;);
+    $(&quot;#box&quot;).nextAll().css(&quot;background&quot;,&quot;red&quot;);//获取所有；
+
+.next()方法
+    $(&quot;#box&quot;).next(&quot;li&quot;).css(&quot;background&quot;,&quot;red&quot;);//无法跨越节点
+</code></pre><p>类的操作：样式少的时候用css()，样式多的时候用类操作；<br>①类的添加：addClass()，(不是addClassName())不会覆盖掉原有类名，不会重复添加；<br>    $(“li”).addClass(“aaa”);</p>
+<p>②类的删除; removeClass()，有就删除，没有也不报错；<br>    $(“li”).removeClass(“show”);</p>
+<p>③类的判断; hasClass()，返回一个bool值，有就是true，没有就是false，有一个有的就可以；<br>    alert($(“li”).hasClass(“bbb”));</p>
+<p>④类的切换; toggleClass()，有变没，没变有；<br>    $(“li”).toggleClass(“bbb”);</p>
+<p>jQuery动画：<br>①显示隐藏：<br>    show(); 显示<br>    用法1:  无参——瞬间显示[display: block;]；<br>        $(“div”).show();<br>    用法2:  1个参数，毫秒值——指定时间显示[width/height/padding/margin/opacity/overflow/display]；<br>                $(“div”).show(1000);<br>    用法3:  1个参数，字符串——指定时间显示[width/height/padding/margin/opacity/overflow/display]；<br>                /<em> slow：600ms、normal：400ms、fast：200ms </em>/<br>        $(“div”).show(“normal”);<br>    用法4:  2个参数，毫秒值和回调函数——指定时间显示，然后执行函数[width/height/padding/margin/opacity/overflow/display]；<br>        $(“div”).show(2000, function (){ alert(“完成”); });</p>
+<pre><code>hide(); 隐藏
+用法1:  无参——瞬间隐藏[display: none]；
+    $(&quot;div&quot;).hide();
+用法2:  1个参数，毫秒值——指定时间隐藏[width/height/padding/margin/opacity/overflow/display]；
+    $(&quot;div&quot;).hide(1000);
+用法3:  1个参数，字符串——指定时间隐藏[width/height/padding/margin/opacity/overflow/display]；
+            /* slow：600ms、normal：400ms、fast：200ms */
+    $(&quot;div&quot;).hide(&quot;normal&quot;);
+用法4:  2个参数，毫秒值和回调函数——指定时间隐藏，然后执行函数[width/height/padding/margin/opacity/overflow/display]；
+    $(&quot;div&quot;).hide(2000, function (){ alert(&quot;完成&quot;); });
+
+toggle(); 切换
+用法1:  无参——瞬间切换[/display: block/none]；
+    $(&quot;div&quot;).toggle();
+用法2:  1个参数，毫秒值——指定时间切换[width/height/padding/margin/opacity/overflow/display]；
+    $(&quot;div&quot;).toggle(1000);
+用法3:  1个参数，字符串——指定时间切换[width/height/padding/margin/opacity/overflow/display]；
+            /* slow：600ms、normal：400ms、fast：200ms */
+    $(&quot;div&quot;).toggle(&quot;normal&quot;);
+用法4:  2个参数，毫秒值和回调函数——指定时间切换，然后执行函数[width/height/padding/margin/opacity/overflow/display]；
+    $(&quot;div&quot;).toggle(2000, function (){ alert(&quot;完成&quot;); });
+</code></pre><p>②滑入滑出：<br>    slideDown(); 滑入<br>    用法1:  无参——正常时间滑入[width/height/padding/margin/overflow/display]；<br>        $(“div”).slideDown();    //400ms；</p>
+<pre><code>用法2:  1个参数，毫秒值——指定时间滑入[width/height/padding/margin/overflow/display]；
+    $(&quot;div&quot;).slideDown(1000);
+
+用法3:  1个参数，字符串——指定时间滑入[width/height/padding/margin/overflow/display]；
+    /* slow：600ms,normal：400ms,fast：200ms */
+    $(&quot;div&quot;).slideDown(&quot;normal&quot;);
+
+用法4:  2个参数，毫秒值和回调函数——指定时间滑入，然后执行函数[width/height/padding/margin/overflow/display]；
+    $(&quot;div&quot;).slideDown(2000, function (){ alert(&quot;完成&quot;); });
+
+slideUp(); 切换
+用法1:  无参——正常时间滑出[width/height/padding/margin/overflow/display]
+    $(&quot;div&quot;).slideUp();    //400ms
+
+用法2:  1个参数，毫秒值——指定时间滑出[width/height/padding/margin/overflow/display]
+    $(&quot;div&quot;).slideUp(1000);
+
+用法3:  1个参数，字符串——指定时间滑出[width/height/padding/margin/overflow/display]
+    /* slow：600ms,normal：400ms,fast：200ms */
+    $(&quot;div&quot;).slideUp(&quot;normal&quot;);
+
+用法4:  2个参数，毫秒值和回调函数——指定时间滑出，然后执行函数[width/height/padding/margin/overflow/display]
+    $(&quot;div&quot;).slideUp(2000, function (){ alert(&quot;完成&quot;); });
+
+slideToggle(); 切换
+用法1:  无参——正常时间切换[width/height/padding/margin/overflow/display]
+    $(&quot;div&quot;).slideToggle();    //400ms
+
+用法2:  1个参数，毫秒值——指定时间切换[width/height/padding/margin/overflow/display]
+    $(&quot;div&quot;).slideToggle(1000);
+
+用法3:  1个参数，字符串——指定时间切换[width/height/padding/margin/overflow/display]
+    /* slow：600ms,normal：400ms,fast：200ms */
+    $(&quot;div&quot;).slideToggle(&quot;normal&quot;);
+
+用法4:  2个参数，毫秒值和回调函数——指定时间切换，然后执行函数[width/height/padding/margin/overflow/display]
+    $(&quot;div&quot;).slideToggle(2000, function(){ alert(&quot;完成&quot;); });
+</code></pre><p>③淡入淡出：<br>    fadeIn(); 淡入<br>    用法1:  无参——正常时间淡入[display/opacity]<br>        $(“div”).fadeIn();    //400ms；</p>
+<pre><code>用法2:  1个参数，毫秒值——指定时间淡入[display/opacity]
+    $(&quot;div&quot;).fadeIn(1000);
+
+用法3:  1个参数，字符串——指定时间淡入[display/opacity]
+    /* slow：600ms,normal：400ms,fast：200ms */
+    $(&quot;div&quot;).fadeIn(&quot;normal&quot;);
+
+用法4:  2个参数，毫秒值和回调函数——指定时间淡入，然后执行函数[display/opacity]
+    $(&quot;div&quot;).fadeIn(2000, function (){ alert(&quot;完成&quot;); });
+
+fadeOut(); 切换
+用法1:  无参——正常时间淡出[display/opacity]
+    $(&quot;div&quot;).fadeOut();    //400ms
+
+用法2:  1个参数，毫秒值——指定时间淡出[display/opacity]
+    $(&quot;div&quot;).fadeOut(1000);
+
+用法3:  1个参数，字符串——指定时间淡出[display/opacity]
+    /* slow：600ms,normal：400ms,fast：200ms */
+    $(&quot;div&quot;).fadeOut(&quot;normal&quot;);
+
+用法4:  2个参数，毫秒值和回调函数——指定时间淡出，然后执行函数[display/opacity]
+    $(&quot;div&quot;).fadeOut(2000, function (){ alert(&quot;完成&quot;); });
+
+fadeToggle(); 切换
+用法1:  无参——正常时间切换[display/opacity]
+    $(&quot;div&quot;).fadeToggle();    //400ms
+
+用法2:  1个参数，毫秒值——指定时间切换[display/opacity]
+    $(&quot;div&quot;).fadeToggle(1000);
+
+用法3:  1个参数，字符串——指定时间切换[display/opacity]
+    /* slow：600ms,normal：400ms,fast：200ms */
+    $(&quot;div&quot;).fadeToggle(&quot;normal&quot;);
+
+用法4:  2个参数，毫秒值和回调函数——指定时间切换，然后执行函数[display/opacity]
+    $(&quot;div&quot;).fadeToggle(2000, function (){ alert(&quot;完成&quot;); });
+
+fadeTo(); 不透明程度;
+用法1:  指定时间，指定程度——指定时间切换到某个透明度[display/opacity]
+    $(&quot;div&quot;).fadeTo(1000,0.5);
+
+用法2:  3个参数，毫秒值和透明程度和回调函数——指定时间切换透明度，然后执行函数[display/opacity]
+    $(&quot;div&quot;).fadeTo(1000,0.5,function (){...});
+</code></pre><p>④自定义动画：<br>    animate(prop,speed,easing,callback);    四个参数：1.json对象（属性:值）；2.时间（msecond）；3.运动方程（linear/swing）；4.回调函数（this指向调用的DOM对象）；<br>★注意：animate()方法能让调用它的元素对象的特定属性从当前值连续地变化到目标状态，但不支持如 transform 、transition 和 animation 这样的属性的不同值之间过渡动画效果，但是可以使用 H5C3 中的 CSS3<br>    属性 transition 或 animation 本身配合包括 transform 在内的众多属性来完成这些动画效果，再通过设置类名或通过行内样式在 JS 中来控制效果的添加或去除！！！</p>
+<p>停止动画：<br>    stop([type,]clearQueue,gotoEnd);    三个参数：1.停止动画的类型；2.是否清空后续动画队列（true，后续不执行；false，后续动画继续执行）；3.是否直接完成当前动画（true，当前动画立即完成；false，当前动画直接停止）；</p>
+<pre><code>$(&quot;div&quot;).stop();        //默认是false，false
+$(&quot;div&quot;).stop(true,true);    //后续动画不执行,立即执行完成当前动画
+$(&quot;div&quot;).stop(false,true);    //后续动画会执行,立即执行完成当前动画
+$(&quot;div&quot;).stop(true,false);    //后续动画不执行,立即停止当前动画
+$(&quot;div&quot;).stop(false,false);    //后续动画会执行,立即停止当前动画
+</code></pre><p>DOM元素的创建：<br>①.html(“”)方法：容易覆盖内容，一定要注意+=,需重新绑定事件；<br>    $(父元素).html();            //等同于innerHTML属性值获取<br>    $(父元素).html(“<tagname></tagname>“);    //等同于innerHTML属性值赋值<br>②$(“”)函数：标签名一定要带上“&lt;&gt;”，否则是获取已存在的标签；<br>    $(“<tagname></tagname>“);        //等同于document.createElement(“tagName”)方法<br>    $(“ul”).append($(“<li>这是Li标签</li><li>这是Li标签</li>“));</p>
+<p>DOM元素的添加：<br>①append()方法：<br>    父节点jQquery对象.append(子节点jQquery对象|子节点字符串);    //把参数作为子节点添加到父节点的最末尾;<br>    var li = $(“<li></li>“);<br>    $(“ul”).append(li);<br>    $(“ul”).append(“<li>我是jQ创建的li</li>“);</p>
+<p>②appendTo()方法：<br>    子节点jQquery对象.appendTo(父节点jQquery对象);            //把参数作为父节点添加到该节点的最末尾;<br>    li.appendTo($(“ul”));</p>
+<p>③prepend()方法：<br>    父节点jQquery对象.prepend(子节点jQquery对象|子节点字符串);    //把参数作为子节点添加到父节点的最前面;<br>    $(“ul”).prepend(li);<br>    $(“ul”).prepend(“<li>我是jQ创建的li1</li>“);</p>
+<p>④prependTo()方法：<br>    子节点jQquery对象.prependTo(父节点jQquery对象);            //把参数作为父节点添加到该节点的最前面;<br>    li.prependTo($(“ul”));</p>
+<p>⑤after()方法：<br>    参考节点jQquery对象.after(新节点jQquery对象);            //把新节点添加到参考节点之后，作为其兄弟节点;<br>    $(“.box”).after(li);</p>
+<p>⑥before()方法：<br>    参考节点jQquery对象.before(新节点jQquery对象);            //把新节点添加到参考节点之前，作为其兄弟节点;<br>    $(“.box”).before(li);</p>
+<p>DOM元素的清空和删除：<br>·清空：<br>①empty()方法：先解绑事件，然后再删除元素，比较彻底，推荐使用empty方法；<br>    jQuery对象.empty();<br>②html()方法：<br>    jQuery对象.html(“”);<br>·删除：<br>③remove()方法：<br>    jQuery对象.remove();                        //删除自己<br>    jQuery对象.remove(“selector”);                    //删除对应子元素</p>
+<p>DOM元素的复制：<br>①clone()方法：<br>    jQuery对象.clone(dataAndEvent);                    //没有深层还是浅层复制之分，都是深层复制,参数用于控制是否复制事件;</p>
+<p>jQuery对象操作：</p>
+<p>—属性操作—<br>①attr()方法：类同于原生JS的get/setAttribute()方法，常应用于普通属性（通过属性值起作用）或自定义属性设置（可以对元素设置自定义属性作为标记使用）；<br>    特点：能获取/修改属性名对应的属性值，没有值时获取空串（表单属性存在时总获取该属性名），没有属性名时获取undefined，可以将属性置空但无法删除；<br>    jQuery对象.attr(“htmlProperty”);                //获取属性值<br>    jQuery对象.attr(“htmlProperty”, “value”);            //设置属性值<br>    清空属性：<br>    jQuery对象.attr(“htmlProperty”,””)                //清空属性，设置属性值为空串时，元素上仍有其属性名，但对于普通元素这等效于删除属性<br>    删除属性——removeAttr()方法；<br>    jQuery对象.removeAttr(“htmlProperty”);                //删除属性</p>
+<p>②prop()方法：常应用于表单属性（其属性值是什么不重要，重要的是该属性名是否存在于元素中）；<br>    特点：表单属性存在时返回true，不存在时返回false，其他同attr方法；<br>    jQuery对象.prop(“htmlProperty”);                //获取属性值，表单属性返回boolean值，指示是否存在<br>    jQuery对象.prop(“htmlProperty”, “value”|boolean);        //设置属性值<br>    删除属性——removeProp()方法；<br>    jQuery对象.removeProp(“htmlProperty”);                //通常不使用，通过prop方法设置表单属性false即可代替</p>
+<p>③val()方法：用于操作value属性；<br>    jQuery对象.val();                        //无参获取value值<br>    jQuery对象.val(“value”);                    //带参设置value值</p>
+<p>—内容操作—<br>④html()方法：识别标签==innerHTML；<br>    jQuery对象.html();                        //无参获取内容，包括子标签<br>    jQuery对象.html(“<tagname></tagname>“);                //带参赋值内容，包括子元素</p>
+<p>⑤text()方法：不识别标签==innerText；<br>    jQuery对象.text();                        //无参获取文本内容<br>    jQuery对象.text(“value”);                    //带参赋值文本内容</p>
+<p>—尺寸操作—<br>⑥width/height()方法：对应元素内容区域的宽度/高度，不包括border和padding，值为数字，单位像素；<br>    jQuery对象.width();                        //无参获取<br>    jQuery对象.width(num);                        //带参赋值<br>★注意：.css()方法返回的是字符串（带”px”单位）！！！</p>
+<p>—位置操作—<br>⑦offset()方法：获取或设置元素相对于文档的位置；<br>    jQuery对象.offset();                        //无参获取，返回一个json对象{top:value,left:value}，且该对象不是接口<br>    jQuery对象.offset(json对象);                    //带参赋值，参数必须是一个json对象{top:value,left:value}<br>★注意：当元素没有设置定位时对其赋值来修改位置，会自动给其添加相对定位，然后通过计算当前位置与目标位置的距离，再用以赋值！！！</p>
+<p>⑧position()方法：获取相对于其最近的具有定位的父元素的位置，以该盒子的margin外边界左上角为准，父系盒子没有定位则参照整个页面；<br>    jQuery对象.position();                        //无参获取<br>                                    //无法赋值</p>
+<p>⑨scrollTop()方法：被卷去的顶部距离，用的最多；<br>  scrollLeft()方法：被卷去的左侧距离；<br>    jQuery对象.scrollTop();                        //无参获取，获取值的时候底层原理：body/html.scrollTop;<br>    jQuery对象.scrollTop(num);                    //带参赋值，赋值的原理是页面设置：window.scrollTo(x,y);</p>
+<p>jQuery事件机制：<br>—事件绑定—<br>①简单方法绑定（用事件类型的同名方法）：不会出现事件层叠，不能一次完成多类型事件绑定，没有事件委托功能；<br>    jQuery对象.eventType(fn);                            //<br>    $(“li”).click(function(){code…});                        //隐式迭代,jQuery对象中的所有元素上都绑定同一事件处理函数<br>②bind()方法绑定：不会出现事件层叠，能一次完成多类型事件绑定，没有事件委托功能；<br>    jQuery对象.bind(“eventType1[ eventType2[…]]”,fn);                //<br>    $(“li”).bind(“click mouseover”, function(){code…});                //隐式迭代<br>③delegate()方法绑定：不会出现事件层叠，能一次完成多类型事件绑定，只有事件委托功能，不能用于绑定当前元素自身的事件功能；<br>    jQuery对象.delegate(“selector”, “eventType1[ eventType2[…]]”, fn);<br>    $(“ul”).delegate(“li”, “click mouseover”, function(){code…});<br>④on()方法绑定：不会出现事件层叠，能一次完成多类型事件绑定，有事件委托功能，还可以用于绑定当前元素自身的事件功能；<br>    jQuery对象.on(“eventType1[ eventType2[…]]”[, “selector”][, data], fn);    //data实参会被传递给事件对象event中作为data属性<br>    $(“ul”).on(“click mouseover”, “li”, {name:zhangsan}, function(){code…});    //</p>
+<p>—事件解绑—<br>★注意：jQuery库中的事件绑定有四种形式,但是对应的事件解绑只有三种形式，简单方法绑定方式没有对应的解绑方法，只能使用其他方式提供的解绑方法！！！<br>★注意：jQuery方法绑定的事件处理程序，要用jQuery提供的方式来解绑，而原生JS绑定的函数要用原生JS提供的解绑方法！！！<br>★注意：需解绑的函数必须要事先保留在某处变量或对象的属性当中——解绑必须使用同一函数对象！！！<br>⑤简单方式绑定——使用unbind()或off()方法：<br>    jQuery对象.unbind(“eventType1[ eventType2[…]]”,fn);                //可以一次解绑多种类型事件绑定的同一函数（通过jQuery绑定的事件）<br>    jQuery对象.unbind(“eventType1[ eventType2[…]]”);                //可以一次解绑多种类型事件绑定的所有函数（通过jQuery绑定的事件）<br>    jQuery对象.unbind();                                //可以一次解绑所有类型事件绑定的所有函数（通过jQuery绑定的事件）<br>    jQuery对象.off(“eventType1[ eventType2[…]]”,fn);                //可以一次解绑多种类型事件绑定的同一函数（通过jQuery绑定的事件）<br>    jQuery对象.off(“eventType1[ eventType2[…]]”);                    //可以一次解绑多种类型事件绑定的所有函数（通过jQuery绑定的事件）<br>    jQuery对象.off();                                //可以一次解绑所有类型事件绑定的所有函数（通过jQuery绑定的事件）<br>⑦bind()方法绑定——使用unbind()或off()方法：同上；<br>⑧on()方法绑定————使用off()方法：同上；<br>⑨delegate()方法绑定——使用undelegate()方法：<br>    jQuery对象.undelegate(“selector”, “eventType1[ eventType2[…]]”, fn);        //可以一次解绑所选元素所委托的多种类型事件上绑定的同一函数<br>    jQuery对象.undelegate(“selector”, “eventType1[ eventType2[…]]”);        //可以一次解绑所选元素所委托的多种类型事件上绑定的所有函数<br>                                            //无法解除全部委托</p>
+<p>—事件触发—<br>☆注：事件触发——通过jQuery代码主动触发某些事件机制。<br>①事件方法调用：<br>    jQuery对象.eventType();                                //触发浏览器默认行为，执行该事件上所有逻辑，而不能指定只执行某特定函数逻辑<br>②trigger()方法：<br>    jQuery对象.trigger(“eventType1[ eventType2[…]]”);                //触发浏览器默认行为，执行该事件上所有逻辑，而不能指定只执行某特定函数逻辑<br>③triggerHandler()方法：<br>    jQuery对象.triggerHandler(“eventType1[ eventType2[…]]”);            //不触发浏览器默认行为，同上</p>
+<p>—事件对象—<br>④</p>
+<p>Ⅶ DOM方法扩展：<br>①获取元素的方法：<br>    document.querySelector(“selector”);                        //获取 第一个 符合CSS选择规则的元素<br>    document.querySelectorAll(“selector”);                        //获取 所有的 符合CSS选择规则的元素</p>
+<p>②类名操作：<br>    element.classList.add();                            //类名添加<br>    element.classList.remove();                            //类名移除<br>    element.classList.toggle();                            //类名切换，有则删除无则添加<br>    element.classList.contains();                            //类名包含，判断元素是否包含该类名，包含返回true，否则返回false<br>◇jQuery中的类名操作：<br>    $(‘selector’).addClass(…);                            //jQuery封装的类名添加<br>    $(‘selector’).removeClass(…);                            //jQuery封装的类名移除<br>    $(‘selector’).toggleClass(…);                            //jQuery封装的类名切换<br>    $(‘selector’).hasClass(…);                            //jQuery封装的类名检查</p>
+<p>③自定义属性操作：<br>    ·设置格式：<br>        <tagname data-*="">                            //这里的 <em> 代表自己起的名字，例如：data-name/data-family-name/data-china-family-name<br>    ☆注：最早以前，声明自定义属性是随意的，而为了规范自定义属性的声明格式，所以现在的 DOM 中提供了具体的 声明格式 以及 操作接口 ！！！<br>    ·获取data-</em>格式的属性：<br>        element.dataset.<em>;                            //如果属性中出现多个”-“连接的单词的话，要使用驼峰命名法书写，以代替”-“的连接<br>        $(‘selector’).data(‘</em>‘);                        //jQuery中封装的 data-<em> 的获取方法<br>    ·设置data-</em>格式的属性：<br>        element.dataset.* = value;</tagname></p>
+<p>⑷BOM（Browser Object Model）浏览器对象模型：；</p>
+<p>Ⅰ全局对象window：<br>—Location对象—        //地址栏接口<br>window.location.scheme        //通讯协议，支持不太好<br>window.location.href        //全部内容获取<br>window.location.protocol    //通讯协议<br>window.location.host        //主机地址:端口号<br>window.location.port        //端口号<br>window.location.pathname    //path兼容不太好，获取路径</p>
+<p>页面跳转或刷新：<br>①assign()方法：改变浏览器地址栏的地址，并记录到历史中；<br>    location.assign(“<a href="http://www.baidu.com" target="_blank" rel="noopener">http://www.baidu.com</a>“);    //同下<br>    location.href = “<a href="http://www.jd.com" target="_blank" rel="noopener">http://www.jd.com</a>“;        //用的最多</p>
+<p>②replace()方法：替换浏览器地址栏的地址，不会记录到历史中；<br>    location.replace(“<a href="http://www.taobao.com" target="_blank" rel="noopener">http://www.taobao.com</a>“);</p>
+<p>③reload()方法：刷新页面；<br>    location.reload();</p>
+<p>★★★★注意：<br>    a标签的href属性为”#”时，跳转到页面的最顶端（”#id”则跳到特定Id的元素处），不刷新页面；<br>    a标签的href属性为””时，刷新页面；<br>    a标签的href属性为”javascript:;”时，点击以后没有跳转——以下两种可以用于取消a标签的默认跳转行为；<br>    a标签的href属性为”javascript:void(0);”时，点击以后没有跳转；</p>
+<p>—History对象—                        //历史记录接口<br>①forward()方法：跳转到历史记录中的下一个页面；<br>②back()方法：跳转到历史记录中的上一个页面；<br>③go(n)方法：跳转到历史记录中的+下/-上n个页面，或0刷新页面；</p>
+<p>—Navigator对象—                    //系统和浏览器信息<br>①userAgent：用户代理信息——即浏览器信息；<br>②platform：操作系统信息——即windows或apple系统版本等；</p>
+<p>—Document对象—<br>见DOM。</p>
+<p>⑸AJAX（Asynchronous JavaScript and XML）异步的JavaScript和XML：AJAX 是一种在无需重新请求服务器并加载整个网页的情况下，通过JavaScript在后台与服务器进行少量数据交换，使得部分网页实现异步更新的技术；</p>
+<pre><code>AJAX 不是一门新的编程语言，而是一种使用现有标准的新技术、新方法——一套新型的API，它使得在JS中也能够直接主动地发送请求到服务器，而不需要再通过浏览器的加载动作或刷新操作来发送请求——虽然
+</code></pre><p>  JS中可以通过利用BOM/DOM接口来控制浏览器和页面的加载和刷新动作，但是这种请求本质上仍是通过浏览器间接发送的；<br>  ☆注：让浏览器发送请求的方式——1.表单提交form+submit；2.加载带有href（资源链接使用）或src（资源加载使用）属性的标签；3.地址栏Location；</p>
+<p>⒈AJAX的基础——XMLHttpRequest对象：请求代理对象，该类型对象用于和当前服务器进行交换数据——同域请求，所有现代浏览器均支持内置的 XMLHttpRequest 类型对象（☆注：IE5和IE6使用ActiveXObject）；</p>
+<p>  ■XMLHttpRequest构造器创建实例对象：<br>    ◆var xhr = new XMLHttpRequest();<br>  ☆注：new ActiveXObject(“Microsoft.XMLHTTP”);        //IE5和IE6创建ActiveX对象</p>
+<p>  ■发送请求到服务器：<br>    ◆xhr.open(method, url, async);            //method设置请求的类型[GET|POST]、url设置请求的资源路径URL以及async设置是否异步处理请求[true异步|false同步]；<br>    ★注意：XMLHttpRequest 对象如果要用于 AJAX 的话，其 open() 方法的 async 参数必须设置为 true（没有设置该参数时默认值为true）！！！<br>        异步true        调用send()方法发送请求时，程序会在响应到达前就返回（readyState==1）；<br>        同步false        调用send()方法发送请求时，程序会在响应完成后才返回（readyState==4），整个过程中JS程序被“阻塞”；<br>    ★注意：GET请求方式下，必须通过其中的URL地址来向服务器传递参数（$_GET接收）！！！<br>    ★注意：POST请求方式下，不仅可以通过其中的URL地址来向服务器传递参数（$_GET接收），还可以在调用send()方法发送请求时，通过存储其实参值到请求体来传递参数到服务端（$_POST接收）！！！</p>
+<pre><code>★注意：需要注意的是，通过send()方法发送的数据是有一定的类型的——即请求头中Content-Type的值，服务端会根据该MIME类型来决定请求体中内容的相应处理方式——application/x-www-form-urlencoded
+    将使用URL地址中参数的编码格式来解析请求体中的内容，并将成功获得的键值对传递到$_POST；text/plain;charset=UTF-8按照UTF-8字符集将请求体中的二进制内容解析为纯文本，但不传给$_POST；...等等；
+    所以，若想让服务端能正确地解析并使用AJAX中POST方式传递的参数，必须在open()连接后，send()发送前设置好相应的请求头Content-Type类型！！！
+★注意：在服务器端发送的响应报文里，响应头中Content-Type的值会告诉浏览器该响应体内容的类型，浏览器会根据该MIME类型来决定响应体内容的对应处理方式——text/htmlHTML页面；text/cssCSS样式表；
+    application/javascript将所有文本内容作为JS代码（JSONP：当通过script标签的src属性发送[跨域|同域]请求时，获得的application/javaScript类型文本会被作为JS代码执行）；application/json
+    JSON格式编码的字符串数据！！！
+★注意：若请求体或响应体中的数据包含中文编码，则可能需要设置对应的字符集才能正常显示，方法为在请求头或响应头的Content-Type值后面加上字符集设置&quot;;charset=UTF-8&quot;！！！
+◆xhr.setRequestHeader(header,value);        //设置请求头，如setRequestHeader(&apos;Content-Type&apos;,&apos;application/x-www-form-urlencoded&apos;)
+★注意：JavaScript程序运行在客户端浏览器中，所以只能设置请求头，而响应头只能在服务端去设置（PHP的header()方法）！！！
+
+◇xhr.responseType                //设置该值能够告诉服务器你期望的响应体格式
+◆xhr.send(string);                //按照设定的方式将请求发送到服务器，★string仅用于在 POST 方式下传递参数到响应体中（纯二进制数据），GET 方式下设置了也没有用
+</code></pre><p>  ■处理整个交互过程——readystatechange事件：每当XMLHttpRequest对象的 readyState 属性改变时，就会触发其上的 readystatechange 事件；<br>    ◆xhr.onreadystatechange = function(){};<br>    ◆xhr.addEventListener(“readystatechange”,function(){});</p>
+<p>  ■XMLHttpRequest对象的状态——readyState属性；<br>    ◇xhr.readyState                请求状态<br>      0                        UNSENT(未打开)，open()方法还未被调用——创建对象但请求未初始化；<br>      1                        OPENED(未发送)，send()方法还未被调用——请求已初始化（同步|异步）；<br>      2                        HEADERS_RECEIVED(已获取响应头)，send()方法已经被调用，响应头和响应状态已经返回——请求发送完毕、服务器响应到达（接到了响应头）但尚未接收响应体；<br>      3                        LOADING(正在下载响应体)，响应体下载中，responseText中已经获取了部分数据——接收响应体；<br>      4                        DONE(请求完成)，整个请求过程已经完毕——响应体接收完毕，响应已完成；<br>  ★注意：当② readyState 等于 4 且① status 状态为 200 时，才表示①访问已成功且②响应已就绪！！！<br>    ◇xhr.status                    该请求的响应状态码(例如，状态码200——表示一个成功的请求)；<br>    ◇xhr.statusText                该请求的响应状态信息，包含一个状态码和原因短语(例如”200 OK”)；<br>      200                        “OK”，访问成功；<br>      404                        未找到页面；</p>
+<p>  ■获取响应信息——响应头：<br>    ◆xhr.getAllResponseHeaders();            //获取包含所有响应头内容（键值对）的对象<br>    ◆xhr.getResponseHeader(headerStr);        //获取特定响应头的值</p>
+<p>  ■获取响应信息——响应体：<br>    ◇xhr.responseText                //获得字符串形式的响应体数据（以json格式编码）<br>    ◇xhr.responseXML                //获得 XML  形式的响应体数据<br>  ☆注：简介 XML 和 JSON ：<br>      □XML（Extensible Markup Language）可扩展标记语言：标准通用标记语言的子集，是一种用于标记电子文件使其具有结构性的标记语言——被设计用来★传输和存储★数据，对应文件扩展名为(.xml)；</p>
+<pre><code>  □JSON（JavaScript Object Notation）JS对象表示法：是一种轻量级的★数据交换格式★，基于 ECMAScript (W3C制定的JS规范)的一个子集，采用完全独立于编程语言的文本格式来★存储和表示★数据，对应文件扩展名为(.json)，MIME 类型是 &quot;application/json&quot; ；
+◇JavaScript 对象文法：
+在 JavaScript 语言中，一切都是对象！因此，任何支持的类型都可以通过 JSON 来表示，例如字符串、数字、对象、数组等，但是对象和数组是比较特殊且常用的两种类型：
+    ·对象表示为键/值对的集合；
+    ·键名在前，键值在后，两者间使用冒号&quot;:&quot;分隔；
+    ·键名不需要引号&quot;&quot;|&apos;&apos;包裹；
+    ·数据之间由逗号分隔；
+    ·花括号{}用于声明对象；
+    ·方括号[]用于声明数组；
+◇JSON 文法：
+而 JSON 键/值对是用来保存 JS 对象的一种方式，和 JS 对象的写法也大同小异，区别：
+    ·键名必须用双引号&quot;&quot;包裹；
+    ·键值可以是任何JSON类型的数据，如数组，对象，null，数字，字符串，逻辑布尔值；
+    ·每个对象皆由花括号{}包裹；
+    ·每个数组须有方括号[]包裹；
+JSON 数据：
+    {&quot;firstName&quot;: &quot;John&quot;}
+等价于这条 JavaScript 语句：
+    {firstName : &quot;John&quot;}
+★注意：JSON 是JavaScript对象的字符串表示法，它使用文本表示一个 JS 对象的信息，本质是一个字符串！！！
+◇JSON 和 JavaScript对象的互转：
+    ·从 JS 对象转换为 JSON 字符串——使用内置实例对象JSON的 JSON.stringify() 方法：
+        JSON.stringify(value[, replacer [, space]]);        //value为将要序列化成 一个JSON 字符串的值；replacer若是一个函数，则在序列化过程中，被序列化的值的每个属性都会经过该函数的转换和处理|若是一个数组，则只有包含在这个数组中的属性名才会被序列化到最终的 JSON 字符串中；space指定缩进用的空白字符串，用于美化输出
+        var json = JSON.stringify({a: &apos;Hello&apos;, b: &apos;World&apos;});     //结果是字符串 &apos;{&quot;a&quot;: &quot;Hello&quot;, &quot;b&quot;: &quot;World&quot;}&apos;
+    ·从 JSON 字符串转换为 JS 对象——使用JSON的 JSON.parse() 方法：
+        JSON.parse(text[, reviver]);                //text为要被解析成JavaScript值的字符串；reviver是一个函数function (k, v)，规定了在被返回之前原始值如何被解析改造
+        var obj = JSON.parse(&apos;{&quot;a&quot;: &quot;Hello&quot;, &quot;b&quot;: &quot;World&quot;}&apos;);     //结果是对象 {a: &apos;Hello&apos;, b: &apos;World&apos;}
+◇JSON 和 PHP 数据的转换：
+    ·从 PHP 数据转换为 JSON 字符串——使用内置的系统函数json_encode(php_value);
+    ·从 JSON 字符串转换为 PHP 数据——使用内置的系统函数json_decode(json_str[, flag]);//flag默认为false转换为PHP对象，true则转换为PHP数组
+</code></pre><p>  ■XHR2简介：<br>    ◆xhr.onprogress = function(){};        //新增事件（兼容性问题），readyState===3触发<br>      xhr.addEventListener(‘progress’,function(){});<br>    ◆xhr.onload = function(){};            //新增事件（兼容性问题），readyState===4触发<br>      xhr.addEventListener(‘load’,function(){});</p>
+<p>⒉AJAX的封装：<br>    function ajax(url, method, data, callback){<br>        //url为请求的资源路径，★注意：AJAX只能进行同域请求<br>        //method为请求方式：GET|POST<br>        //data为传递给服务器的参数<br>        //callback为回调功能，当成功获取响应数据之后调用该操作，并传递响应数据作为实参</p>
+<pre><code>    //设置参数默认值
+    method = method ? method : &apos;GET&apos;;
+    data = data ? data : {};
+    //格式化实参数据
+    method = method.toUpperCase();
+    var data_arr = [];
+    for(var k in data){
+        data_arr.push(k + &apos;=&apos; + data[k]);
+    }
+    data = data_arr.join(&apos;&amp;&apos;);        
+    //发送请求
+    var xhr = new XMLHttpRequest();
+    if(method === &apos;GET&apos; &amp;&amp; data !== &apos;&apos;){
+        url += &apos;?&apos; + data;
+    }
+    xhr.open(method, url, true);
+    var send = null;
+    if(method === &apos;POST&apos; &amp;&amp; data !== &apos;&apos;){
+        send = data;
+        xhr.setRequestHeader(&apos;Content-Type&apos;,&apos;application/x-www-form-urlencoded&apos;);
+        xhr.responseType = &apos;JSON&apos;;
+    }
+    xhr.send(send);
+    //处理响应
+    xhr.addEventListener(&apos;readystatechange&apos;,function(){
+        if(this.readyState !== 4)return;
+        if(this.status !== 200)return;
+        var data = JSON.parse(this.responseText);
+        callback(data);
+    });
+}
+//将形参设计为一个对象
+function ajax(parameterObj){...}
+ajax({
+    url:&apos;...&apos;,
+    method:&apos;...&apos;,
+    data:{...},
+    callback:function(){}
+});
+</code></pre><p>⒊jQuery封装的AJAX：jQuery底层实现了对 AJAX 请求的功能封装，并在普通请求功能的基础上增加了 AJAX事件 处理等相关的机制；</p>
+<p>①$.ajax()|jQuery.ajax()：jQuery底层的AJAX实现，此外还有简单易用的高层实现——$.get()，$.post()等；<br>    jQuery.ajax(url,[settings]);                                    //$.ajax()返回其创建的 XMLHttpRequest 对象，大多数情况下你无需直接操作该底层函数，除非你需要操作不常用的选项，以获得更多的灵活性<br>    jQuery.ajax(url,                                        //url[string]：请求资源的 URL 地址字符串<br>    {                                                //settings[Object]：AJAX 请求设置对象，其中所有选项都是可选的；jQuery中存在一个 AJAX 全局默认设置对象，若没有提供settings参数或者某选项值，则使用全局默认设置<br>        accepts:Map,                                        //[Object]，默认值取决于数据类型，将其内容类型发送到请求头，以告诉服务器什么样的响应会被接受返回<br>          ■async:true|false,                                    //[Boolean]，默认值true，表示异步请求；若需要发送同步请求，则应设置为false<br>          ■beforeSend:function(XMLHttpRequest){this;//调用本次AJAX请求时传递的options参数},    //[Function]，无默认，发送请求前被调用，传递当前 XMLHttpRequest 对象为唯一实参，★若该函数返回false则可以取消本次ajax请求<br>        cache:true|false,                                    //[Boolean]，默认值true（dataType为script和jsonp时默认为false），设置是否缓存该页面，true缓存，false不缓存<br>          ■complete:function(XMLHttpRequest,textStatus){this;//同上},                //[Function]，无默认，请求完成后被调用，传递当前 XHR 对象和一个描述本次已完成请求的状态的字符串（”success”/“error”/…）<br>        contents:Map,                                        //[Object]，无默认，一个以”{字符串:正则表达式}”配对的对象，用来确定jQuery将如何解析响应，给定其内容类型<br>          ■contentType:”…”,                                    //[String]，默认值”application/x-www-form-urlencoded”，发送信息至服务器时内容编码类型（请求头的Content-Type）<br>        context:{…},                                        //[Object]，无默认，用于设置Ajax相关回调函数的上下文——也就是说，让回调函数内this指向这个对象（如果不设定这个参数，那么this就指向调用本次AJAX请求时传递的options参数）<br>        converters:Map,                                        //[Object]，默认值{“* text”: window.String, “text html”: true, “text json”: jQuery.parseJSON, “text xml”: jQuery.parseXML}，一个数据类型对数据类型转换器的对象，每个转换器的值是一个函数，返回响应的转化值<br>        crossDomain:true|false,                                    //[Boolean]，默认值false，同域请求为false，跨域请求为true，如果你想强制跨域请求（如JSONP形式）同一域，设置crossDomain为true，这使得——服务器端重定向到另一个域<br>          ■data:…,                                        //[Object|String]，无默认，发送到服务器的数据，将自动转换为请求字符串格式；GET 请求中将附加在 URL 后；查看 processData 选项说明以禁止此自动转换，必须为 Key/Value 格式（JS对象|数组或form序列化参数”key1=value1&amp;key2=value2”）；如果为数组，jQuery 将自动为不同值对应同一个名称，如 {foo:[“bar1”, “bar2”]} 转换为 “&amp;foo=bar1&amp;foo=bar2”<br>          ■dataFilter:function(data,type){return data;},                        //[Function]，无默认，给 Ajax 返回的原始数据的进行预处理的函数，应提供 data 和 type 两个参数：data 是 Ajax 返回的原始数据，type 是调用 jQuery.ajax 时提供的dataType参数，函数返回的值将由jQuery进一步处理<br>          ■dataType:”…”,                                        //[String]，无默认，预期服务器返回的数据类型，如果不指定，jQuery 将自动根据 HTTP 包 MIME 信息（响应头Content-Type值）来智能判断；”xml”: 返回 XML 文档，可用 jQuery 处理；”html”: 返回纯文本 HTML 信息，包含的script标签会在插入DOM时执行；”script”: 返回纯文本 JavaScript 代码，不会自动缓存结果，除非设置了”cache”参数，★注意：在远程请求时(不在同一个域下)，所有POST请求都将转为GET请求(因为将使用DOM的script标签来加载)；”json”: 返回 JSON 数据 ；”jsonp”: JSONP 格式，使用 JSONP 形式调用函数时，如 “myurl?callback=?” jQuery 将自动替换 ? 为正确的函数名，以执行回调函数；”text”: 返回纯文本字符串<br>          ■error:function(XMLHttpRequest,textStatus,errorThrown){this;//同上},            //[Function]，默认值自动判断(xml 或 html)，请求失败时被调用，应有以下三个形参：XMLHttpRequest 对象、错误信息、（可选）捕获的异常对象<br>        global:true|false,                                    //[Boolean]，默认值true，是否触发全局 AJAX 事件，设置为 false 将不会触发全局 AJAX 事件（ajaxStart|ajaxStop）<br>        headers:Map,                                        //[Object]，默认值{}，一个额外的{键:值}对映射到请求一起发送，此设置被设置之前 beforeSend 函数被调用，因此，消息头中的值设置可以覆盖 beforeSend 函数范围内的任何设置<br>        ifModified:true|false,                                    //[Boolean]，默认值false，true仅在服务器数据改变时获取新数据，使用 HTTP 包 Last-Modified 头信息判断<br>        isLocal:Map,                                        //[Object]，默认取决于当前位置协议<br>          □jsonp:”…”,                                        //[String]，无默认，在一个jsonp请求中重写提供回调函数名的键名；这个值用来替代在”callback=?”这种 GET 或 POST 请求中URL参数里的 “callback” 部分，比如{jsonp:’onJsonPLoad’}会导致将”onJsonPLoad=?”传给服务器<br>          □jsonpCallback:”…”,                                    //[String]，无默认，为jsonp请求指定一个回调函数名；这个值将用来取代jQuery自动生成的随机函数名，这主要用来让jQuery生成度独特的函数名，这样管理请求更容易，也能方便地提供回调函数和错误处理；你也可以在想让浏览器缓存GET请求的时候，指定这个回调函数名<br>        mimeType:”…”,                                        //[String]，无默认，一个mime类型用来覆盖XHR的 MIME类型<br>        password:”…”,                                        //[String]，无默认，用于响应HTTP访问认证请求的密码<br>        processData:true|false,                                    //[Boolean]，默认值true，默认情况下，通过data选项传递进来的数据，如果是一个对象(技术上讲只要不是字符串)，都会处理转化成一个查询字符串，以配合默认内容类型 “application/x-www-form-urlencoded”；如果要发送 DOM 树信息或其它不希望转换的信息，请设置为 false<br>        scriptCharset:”…”,                                    //[String]，无默认，只有当请求时dataType为”jsonp”或”script”，并且type是”GET”才会用于强制修改charset；通常只在本地和远程的内容编码不同时使用<br>        statusCode:Map,                                        //[Object]，默认值{}，每组包括一个数值型的HTTP请求状态码和对应的函数对象，当响应时会调用相应状态码的处理函数；例如{404:function(){alert(…);}}，如果响应状态是404，将触发以下警报<br>          ■success:function(data,textStatus,jqXHR){this;//同上},                    //[Function|Array]，无默认，请求成功后被调用，参数：data 由服务器返回并根据dataType参数进行处理后的数据；textStatus 描述响应状态的字符串；还有 jqXHR（在jQuery 1.4.x中为XMLHttpRequest）对象；在jQuery 1.5中，成功设置可以接受一个函数数组，其中每个函数将被依次调用<br>        traditional:true|false,                                    //[Boolean]，无默认，如果你想要用传统的方式来序列化数据，那么就设置为true（请参考工具分类下面的jQuery.param 方法）<br>        timeout:N,                                        //[Number]，无默认，设置请求超时时间（毫秒），此设置将覆盖全局设置<br>          ■type|method:”GET”|”POST”,                                //[String]，默认值为”GET”，请求方式(“POST” 或 “GET”)；★注意：其它 HTTP 请求方法，如 PUT 和 DELETE 也可以使用，但仅部分浏览器支持！！！<br>          ■url:”url”,                                        //[String]，默认值为当前页面地址，发送请求的地址<br>        username:”…”,                                        //[String]，无默认，用于响应HTTP访问认证请求的用户名<br>          □xhr:function(){return XMLHttpRequest;},                            //[Function]，默认在IE下提供一个 ActiveXObject 而其余 XMLHttpRequest对象；该函数必须返回一个 XMLHttpRequest 对象；用于重写或者提供一个增强的 XMLHttpRequest 对象（★这个参数在jQuery 1.3以前不可用）<br>        xhrFields:Map                                        //[Object]，无默认，”文件名:文件值”，在本机设置XHR对象<br>    });</p>
+<p>②$.ajaxSetup()|jQuery.ajaxSetup()：最简单的情况下 $.ajax() 可以不带任何参数直接使用，但必须注意的是，这需要通过 $.ajaxSetup() 函数来提前进行参数选项的全局设置；<br>    jQuery.ajaxSetup([options]);                                    //[Object]，见$.ajax()的settings设置</p>
+<p>③$.get()|jQuery.get()：这是一个简单的 GET 请求功能以取代复杂的 $.ajax()。请求成功时（success）可调用提供的回调函数；但如果需要在出错时（error）执行某函数，则使用 $.ajax()；<br>    jQuery.get(url, [data], [callback], [type]);                            //url:请求页面的URL地址，data:待发送的 Key/Value 参数，callback:success载入成功时回调函数，type:设置返回内容的格式，如’xml’, ‘html’, ‘script’, ‘json’, ‘text’, ‘_default’</p>
+<p>  $.post()|jQuery.post()：这是一个简单的 POST 请求功能以取代复杂 $.ajax()。请求成功时（success）可调用提供的回调函数；但如果需要在出错时（error）执行某函数，则使用 $.ajax()；<br>    jQuery.post(url, [data], [callback], [type]);                            //同上</p>
+<p>  jQuery对象.load()：载入远程 HTML 文件代码并插入至 DOM 中，默认使用 GET 方式|传递附加参数时自动转换为 POST 方式；<br>    $(“selector”).load(url, [data], [callback]);                            //url:待装入 HTML 路径，data:发送至服务器的 key/value 数据（在jQuery 1.3中也可以接受一个字符串了），callback:载入成功时回调函</p>
+<p>④$.getJSON()|jQuery.getJSON()：通过 HTTP 的 GET 请求载入 JSON 数据；通过使用 JSONP 形式的回调函数来加载其他网域的JSON数据，如”myurl?callback=?”，jQuery 将自动替换 ? 为正确的函数名，以执行回调函数（★注意：此行以后的代码将在这个回调函数执行前执行！！！）<br>    jQuery.getJSON(url, [data], [callback]);                            //同上，同域采用XHR，跨域JSONP</p>
+<p>  $.getScript()|jQuery.getScript()：通过 HTTP 的 GET 请求载入并执行一个 JavaScript 文件；<br>    jQuery.getScript(url, [callback]);</p>
+<p>⑤jQuery对象.ajaxStart(callback)：添加一个 Ajax事件 处理程序，当（该DOM子树内有一个） AJAX请求 开始时执行函数；<br>    $(document).ajaxStart(function(){…});                                //添加 全局的AJAX 响应事件</p>
+<p>⑥jQuery对象.ajaxSend(callback)：添加一个 Ajax事件 处理程序，当（该DOM子树内有一个） AJAX请求 发送前执行函数；<br>    $(document).ajaxSend(function(){…});                                //添加 全局的AJAX 响应事件</p>
+<p>⑦jQuery对象.ajaxError(callback)：添加一个 Ajax事件 处理程序，当（该DOM子树内有一个） AJAX请求 发生错误时执行函数；<br>    $(document).ajaxError(function(){…});                                //添加 全局的AJAX 响应事件</p>
+<p>⑧jQuery对象.ajaxSuccess(callback)：添加一个 Ajax事件 处理程序，当（该DOM子树内有一个） AJAX请求 成功时执行函数；<br>    $(document).ajaxSuccess(function(){…});                            //添加 全局的AJAX 响应事件</p>
+<p>⑨jQuery对象.ajaxComplete(callback)：添加一个 Ajax事件 处理程序，当（该DOM子树内有一个） AJAX请求 完成时执行函数；<br>    $(document).ajaxComplete(function(){…});                            //添加 全局的AJAX 响应事件</p>
+<p>⑩jQuery对象.ajaxStop(callback)：添加一个 Ajax事件 处理程序，当（该DOM子树内有一个） AJAX请求 完成时执行函数；<br>    $(document).ajaxStop(function(){…});                                //添加 全局的AJAX 响应事件</p>
+<p>★注意：只有通过 jQuery 发送的 AJAX请求 才能触发相应的 AJAX事件，而原生 JS 中的 AJAX请求 是无法触发相关机制的！！！<br>★注意：如果要注册 全局AJAX事件 的处理函数，则必须使用 document对象 的 jQuery包装来调用注册方法 ！！！</p>
+<p>⒋Axios封装的AJAX：Axios 基于 Promise 对象来封装异步的 HTTP 请求服务，可以用于 浏览器端 或 node.js中；<br>    ·jQuery 中除了 AJAX 外还封装了大量的 DOM 操作方法，所以 AJAX 相关代码仅占极少的一部分；<br>    ·Vue框架 采用了避免用户直接使用 DOM 操作的设计，所以并不推荐使用 jQuery 来发送 AJAX请求；</p>
+<pre><code>■特点： 
+·支持在浏览器中使用 XMLHttpRequest 来发送 AJAX请求；
+·支持在 Node.js 中发送 Http请求；
+·支持 Promise API接口；
+·拦截 请求 和 响应 ；
+·转换 请求 和 响应 的传输数据；
+·取消请求；
+·自动转换 JSON 格式数据；
+
+■安装及使用：
+    $ npm install axios                                    //通过 NPM 下载到本地
+    &lt;script src=&quot;/public/js/axios.min.js&quot;&gt;&lt;/script&gt;                        //发送同域请求，在全局范围内引入一个 axios 客户端的实例对象，还可以通过其上面绑定的方法来创建出新的 axios 实例对象
+    &lt;script src=&quot;https://unpkg.com/axios/dist/axios.min.js&quot;&gt;&lt;/script&gt;            //发送跨域请求，同上
+    &lt;script&gt;
+        Vue.prototype.$http = axios;                            //通常将 axios 的入口函数绑定到 Vue 的构造原型上，以方便 Vue 实例对象在方法内直接调用
+        const vm = new Vue({
+            el: &apos;#app&apos;,
+            data: {
+            },
+            methods:{
+                async getInfor(){                        //使用 async 函数和 await 来封装该 异步请求操作
+                    var data = await this.$http.get(...);
+                    ...
+                }
+            }
+        });
+    &lt;/script&gt;
+
+■接口API：
+  ◆axios(config);                                        //创建异步请求，返回一个 Promise 对象来接收响应数据
+    axios(url[, config]);                                    //创建异步请求，返回一个 Promise 对象来接收响应数据
+    请求配置        类型        描述                                        示例
+      →url            String        指定用于请求的服务器的URL                            url: &apos;/user&apos;
+      →method            String        发送请求时使用的请求方法，默认为&apos;get&apos;                        method: &apos;get&apos;
+      →baseURL            String        除非设置了绝对的&apos;url&apos;，否则将会以&apos;baseURL&apos;来作为&apos;url&apos;的开头            baseURL: &apos;https://some-domain.com/api/&apos;
+      →transformRequest    Function    允许在将请求数据发送到服务器之前通过设置的 转换函数 依次对其进行修改         transformRequest: [ function (data, headers){ return data; },...] ☆注：数组中的最后一个函数必须返回一个字符串、Buffer、ArrayBuffer、FormData或Stream的实例，并可以修改标题对象。
+      →transformResponse    Function    允许在响应数据传送到 then|catch 之前通过设置的 转换函数 依次进行修改        transformResponse: [ function (data) { return data; },...]
+      →headers            Object        设置要发送的自定义请求头                            headers: {&apos;X-Requested-With&apos;: &apos;XMLHttpRequest&apos;}
+      →params            Object        与请求一起发送的URL参数                                params: { ID: 12345 }
+    paramsSerializer    Function    负责序列化`params`的可选函数                            paramsSerializer: function(params){ return Qs.stringify(params, {arrayFormat: &apos;brackets&apos;}) }
+      →data            Object        作为请求体被发送的数据                                data: { firstName: &apos;Fred&apos; }
+      →timeout            Number        指定请求超时之前的毫秒数                            timeout: 1000
+      →withCredentials        Boolean        指示跨域请求时是否需要使用凭证，默认false                    withCredentials ：false
+    adapter            Function    允许自定义处理请求，使测试更容易                        function(config){ ... }
+    auth            Object        应该使用 HTTP 基础验证，并提供凭据，使用`headers`设置`Authorization`        auth: { username: &apos;janedoe&apos;, password: &apos;s00pers3cret&apos; }
+      →responseType        String        指示服务器将响应的数据类型，默认&apos;json&apos;                        responseType: &apos;json&apos;
+    onUploadProgress    Function    允许在这里处理上传的进度事件                            onUploadProgress: function(progressEvent){ ... }
+    onDownloadProgress    Function    允许在这里处理下载的进度事件                            onDownloadProgress: function(progressEvent){ ... }
+      →maxContentLength    Number        允许的http响应内容的最大尺寸                            maxContentLength: 2000
+    validateStatus        Function    定义对于给定的 HTTP响应状态码 是 resolve 还是 reject 此Promise；        validateStatus: function(status){ return status &gt;= 200 &amp;&amp; status &lt; 300; }
+                        如果`validateStatus`返回`true`(或者设置为 `null` 或 `undefined`)，Promise 将被 resolve；否则，Promise 将被 reject；    
+      →maxRedirects        Number        定义了在node.js中follow的最大重定向次数，如果设置为0，则不会跟随重定向        maxRedirects: 5
+    httpAgent        Object        在 node.js 中用于定义在执行 http 时使用的自定义代理                httpAgent: new http.Agent({ keepAlive: true })
+    httpsAgent        Object        在 node.js 中用于定义在执行 https 时使用的自定义代理                httpsAgent: new https.Agent({ keepAlive: true })
+    proxy            Object        定义代理服务器的主机名和端口，使用 false 来禁用代理，忽略环境变量        proxy: {...}
+    cancelToken        CancelToken    指定用于取消请求的 Cancel Token                            cancelToken: new CancelToken(function(cancel){})
+
+    响应数据结构        类型        描述
+    data            Object        服务器提供的响应数据
+    status            Number        服务器响应的HTTP状态码
+    statusText        String        服务器响应的HTTP状态信息
+    headers            Object        服务器响应的响应头信息（名称全部转换为小写）
+    config            Object        为请求提供的`axios`配置信息
+    request            Object        产生这个响应的请求，在node.js（重定向）中，它是最后一个ClientRequest实例；在浏览器中，一个XMLHttpRequest实例；
+
+  ◆请求方法别名：为了方便操作 axios 中还为所有支持的请求类型提供了相应的 别名 方法，同样是封装了异步请求，返回一个 Promise 对象来接收响应数据；
+    axios.request(config);
+    axios.get(url[, config]);
+    axios.delete(url[, config]);
+    axios.head(url[, config]);
+    axios.options(url[, config]);
+    axios.post(url[, data[, config]]);
+    axios.put(url[, data[, config]]);
+    axios.patch(url[, data[, config]]);
+  ★注意：在使用别名方法时，不需要在 config 中指定 url、 method 或 data 属性！！！
+
+  ◆并发：处理并发请求的助手函数；
+    axios.all(iterable);
+    axios.spread(callback);
+    axios.all([getUserAccount(), getUserPermissions()])                        //返回值组成一个 Promise 对象的数组
+    .then(axios.spread(function (acct, perms) {
+        ...                                        // 两个请求现在都执行完成
+    }));
+
+  ◆创建实例：使用自定义配置新建一个 axios 实例；
+    axios.create([config]);
+
+  ◆配置的默认值/defaults：可以指定将被用在各个请求的配置默认值；
+    ◇全局的 axios 默认值：通过 axios.defaults 对象来设置相应的默认值；
+    ◇自定义实例的默认值：通过调用 axios.create({...}) 创建实例时设置配置的默认值；
+    ◇配置的优先顺序：所设的配置会以一个优先顺序进行合并，这个顺序是：在 lib/defaults.js 找到的库的默认值，然后是实例的 defaults 属性，最后是请求的 config 参数（后者将优先于前者）；
+
+  ◆拦截器[回调函数]：可以在请求或响应被 then 或 catch 处理前拦截它们，并进行相应的处理；
+  ·添加 请求|响应 中的拦截器：
+    axios.interceptors.request.use(function (config) {                        //设置请求被发送前的拦截函数，接收当前请求的配置选项作为参数，并返回修改后的配置对象
+    // 在发送请求之前做些什么
+    return config;
+    }, function (error) {                                    //设置处理请求错误前拦截函数，接收错误对象，并将其封装成 Promise 对象后返回
+    // 对请求错误做些什么
+    return Promise.reject(error);
+    });
+    axios.interceptors.response.use(function (response) {                    //设置获得响应数据前拦截函数，接收原始的响应内容，并返回修改后的结果
+    // 对响应数据做点什么
+    return response;
+    }, function (error) {                                    //设置处理响应错误前拦截函数，接收错误对象，并封装 Promise 返回
+    // 对响应错误做点什么
+    return Promise.reject(error);
+    });
+  ·移除拦截器：
+    var myInterceptor = axios.interceptors.request.use(function () {/*...*/});            //保存返回值，用以移除拦截器
+    axios.interceptors.request.eject(myInterceptor);
+  ·为自定义 axios 实例添加拦截器：
+    var instance = axios.create();
+    instance.interceptors.request.use(function () {/*...*/});
+</code></pre><p>⑹JSONP（JSON with Padding）|JSON包裹：JSON编码数据的一种“使用模式/提取方式”，可用于解决主流浏览器的 跨域 数据访问及数据提取问题；</p>
+<p>★同源策略（Same Origin Policy）：是由 Netscape 提出的一个著名的安全策略，也是★浏览器★最核心也最基本的安全功能——如果缺少了同源策略，则浏览器的正常功能可能都会受到影响，甚至可以说 Web 是构建<br>                  在同源策略的基础之上，而浏览器只是针对同源策略的一种实现；<br>    ·所谓同源是指——协议、域名、端口三者都必须完全相同的情况，否则就被称为——跨源——当一个源从与该源本身所在的服务器不同的域或端口请求一个资源时，该源就会发起一个 跨域HTTP 请求；<br>    ·出于安全原因，浏览器会限制从★脚本内★发起的 跨源HTTP 请求，例如：XMLHttpRequest和Fetch API遵循同源策略——这意味着使用这些API的Web应用程序只能从加载应用程序的同一个域请求的HTTP资源，除非使用CORS头文件；<br>    ·页面内的★普通标签元素★可以通过 href 或 src 属性正常发送 跨源HTTP 请求而不受 同源策略 影响；<br>    ·例如，一个浏览器的两个tab页中分别打开了来自 百度 和 谷歌 的页面时，浏览器的 百度 tab页中若要执行一个脚本请求，则会先检查这个脚本请求的是哪个页面——即检查该请求与当前页面是否同源：<br>        -只有和 百度 同源的请求才会被执行；<br>        -如果非同源，那么在请求数据时，浏览器会在控制台中报一个异常（如下），提示拒绝访问；<br>         XMLHttpRequest cannot load …. No ‘Access-Control-Allow-Origin’ header is present on the requested resource. Origin ‘…’ is therefore not allowed access.<br>    ·现在所有支持 JavaScript 的浏览器都会使用这个策略；<br>★注意：跨域并非不一定是浏览器限制了发起跨域请求，而也可能是跨域请求可以正常发起，但是返回结果被浏览器拦截了。最好的例子是 CSRF 跨站攻击原理，请求是发送到了后端服务器无论是否跨域！！！<br>★注意：有些浏览器不允许从 HTTPS 的域跨域访问 HTTP，比如  Chrome 和 Firefox，这些浏览器在请求还未发出的时候就会拦截请求，这是一个特例！！！</p>
+<p>⒈JSONP原理：<br>    ·由于同源策略的限制，我们无法在脚本内利用 XHR对象 发起 跨域 请求来获得某些其他服务器上的数据（这是浏览器本身的一种安全机制，除非服务器端设置了CORS[兼容性]，否则就会阻止 跨域请求）；<br>    ·但是可以利用其他非脚本方式——如带href、src属性的标签——发送的 跨域请求 来获得这些数据，问题只在于获取方式——★如何将数据传递到脚本内★；<br>    ·因为不是利用传统的 XHR对象 来获取的数据，所以脚本内并没有相关的 接口 可以直接获取服务器端传递的响应内容；<br>    ·在JSONP方式中，主要利用 JavaScript代码 本身的执行来将数据获取至脚本中：<br>        ①利用script标签元素来发起 跨域请求——设置script标签的 src 属性来请求 非同源 服务器上的动态页面；<br>        ②通过这种方式获得的响应内容会被作为 JavaScript代码 而在浏览器端执行；<br>        ③服务器端需要将数据组织成 JSON格式 来传输，这样在浏览器执行响应内容时，这些数据就会被作为JS中的数组或对象来处理；<br>        ④服务器端再将这些 JSON格式 的数据以一个 函数调用 的形式包裹起来，就可以在作为JS代码执行之时，将这些数据以 实参对象 的形式传递至此执行函数之中；<br>        ⑤所以，需要先在JS中设计一个 全局函数 （window.jsonp(data)）以作为接收响应数据的“包裹”，并在发送 跨域请求 时传递该函数的 全局名称（url?callback=jsonp）；<br>        ⑥服务器端获取该函数名$_GET[‘callback’]并用以包裹 JSON数据，再将这些内容作为 JS代码 全部响应给浏览器去执行（Content-Type:application/javascript）；</p>
+<p>⒉JSONP封装：<br>    function jsonp(url, data, callback){<br>        //参数格式化<br>        var para = [];<br>        for(var k in data){<br>            para.push(k + ‘=’ + data[k]);<br>        }<br>        para = para.join(‘&amp;’);</p>
+<pre><code>    var padding = &apos;jsonp&apos; + Math.random().toString().slice(2) + +(new Date());    //生成随机的函数名
+
+    var script = document.createElement(&apos;script&apos;);
+    script.src = url + &apos;?&apos; + para + &apos;&amp;callback=&apos; + padding;
+    window[padding] = function(data){
+        callback(data);
+
+        document.body.removeChild(script);        
+        delete window[padding];
+    };
+    document.body.appendChild(script);                        //当script标签被加载到页面上时，就会发送出该跨域请求        
+}
+服务器端：
+$data = json_encode(...);
+$callback = $_GET[&apos;callback&apos;];
+echo &quot;$callback($data);&quot;;
+</code></pre><p>⒊jQuery封装的JSONP：<br>    ·同样利用$.ajax()方法，只要设置参数选项 dataType 为 ‘jsonp’ 即可（dataType设置通常用来告诉jQuery内部如何处理从服务器端获得的原始数据responseText，如设置’json’则会自动调用JSON.parse方法处理该数据后传递给success回调函数）；<br>    ·其他工作jQuery内部自动完成——例如，创建script标签及属性设置、随机名的全局函数；</p>
+<p>⒋Vue-resource封装的JSONP：为 vue.js 提供了使用 XMLHttpRequest 或 JSONP 方式进行 Web请求 和 处理响应 的服务；</p>
+<pre><code>■特点：
+    ·vue-resource非常小巧，在压缩以后只有大约12KB，服务端启用gzip压缩后只有4.5KB大小，这远比jQuery的体积要小得多；
+    ·和 vue.js 一样，vue-resource 除了不支持 IE9 以下的浏览器，其他主流的浏览器都支持；
+    ·支持 Promise API 和 URI Templates；
+    ·支持拦截器；
+
+■安装：
+    $ npm install vue-resource                        //通过 NPM 安装到本地
+    &lt;script src=&quot;/public/js/vue.js&quot;&gt;&lt;/script&gt;                //首先需要引入 vue.js
+    &lt;script src=&quot;/public/js/vue-resource.js&quot;&gt;&lt;/script&gt;            //通过 同域请求 引入
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/vue-resource@1.3.5&quot;&gt;&lt;/script&gt;    //通过 跨域请求 引入
+★注意：注意加载顺序，该插件需要依赖 vue.js ！！！
+
+■使用：
+    ·通过 全局 的 Vue.http 来调用 API；
+    ·通过 Vue实例 的 this.$http 调用 API；
+★注意：所有请求方法的调用都会返回一个 Promise 对象来处理响应，其成功或失败时都会接收到一个封装好的 response 对象，此外，Vue实例 将会被自动绑定到所有函数回调的 this 中！！！
+
+■API接口：
+·请求方法：
+    get(url, [options]);                //6种标准的HTTP方法
+    head(url, [options]);                
+    delete(url, [options]);                
+    post(url, [body], [options]);            
+    put(url, [body], [options]);            
+    patch(url, [body], [options]);            
+    jsonp(url, [options]);                //jsonp跨域请求方法
+
+·Options 对象：                    
+    参数            类型            描述
+    url            string            请求的URL
+    method            string            请求的HTTP方法，如&apos;GET&apos;、&apos;POST&apos;或其他 HTTP 方法
+    body            Object, FormDatastring    请求体内容
+    params            Object            请求的URL参数对象
+    headers            Object            请求头数据
+    timeout            number            单位为毫秒的请求超时时间 (0 表示无超时时间)
+    before            function(request)    请求发送前的处理函数，类似于 jQuery 的 beforeSend 函数
+    progress        function(event)        ProgressEvent回调处理函数
+    credientials        boolean            表示跨域请求时是否需要使用凭证
+    emulateHTTP        boolean            发送PUT, PATCH, DELETE请求时以HTTP POST的方式发送，并设置请求头的X-HTTP-Method-Override
+    emulateJSON        boolean            将request body以application/x-www-form-urlencoded content type发送
+
+·response 对象：
+    方法            类型            描述
+    text()            string            以 string 形式返回 response body
+    json()            Object            以 JSON对象 形式返回 response body
+    blob()            Blob            以 二进制 形式返回 response body
+    属性            类型            描述
+    ok            boolean            响应的HTTP状态码在200~299之间时，该属性为true
+    status            number            响应的HTTP状态码
+    statusText        string            响应的状态文本
+    headers            Object            响应头
+
+■拦截器Inteceptor：使用 拦截器 可以在 请求发送前 和 收到响应后 做一些处理；
+    Vue.http.interceptors.push((request, next) =&gt; {
+        // ...
+        // 请求发送前的处理逻辑
+        // ...
+        next((response) =&gt; {
+            // ...
+            // 请求发送后的处理逻辑
+            // ...
+            // 根据请求的状态，response参数会自动返回给 successCallback 或 errorCallback
+            return response;
+        });
+    });
+</code></pre><p>⑺CORS（Cross-Origin Resource Sharing）跨域资源共享：跨域资源共享(CORS)机制允许 Web 应用★服务器★进行跨域访问控制，从而使跨域数据传输得以安全进行；<br>                             浏览器支持在 API 容器中（例如：XMLHttpRequest 或 Fetch）使用 CORS，以降低跨域 HTTP 请求所带来的风险。<br>    常用方式：<br>    添加固定响应头：<br>    Access-Control-Allow-Origin: *                            //★告知浏览器★允许所有源发送的跨域请求<br>    Access-Control-Allow-Origin: <a href="http://foo.example" target="_blank" rel="noopener">http://foo.example</a>                    //★告知浏览器★允许特定源发送的跨域请求<br>    判断+添加响应头：<br>    if(in_array(url, allow_origins)){                        //先判断该发起源是否在被允许跨域的范围内，若存在则设置相应的响应头<br>        header(‘Access-Control-Allow-Origin: url’);<br>    }</p>
+<p>  COSS（Cross-Origin Sharing Standard）跨域资源共享标准：<br>    ◆COSS 新增了一组 HTTP 首部字段，允许服务器声明哪些源站有权限访问哪些资源。另外，规范要求，对那些可能对服务器数据产生副作用的 HTTP 请求方法（特别是 GET 以外的 HTTP 请求，或者搭配某些<br>      MIME 类型的 POST 请求），浏览器必须首先使用 OPTIONS 方法发起一个预检请求（Preflight Request），从而获知服务端是否允许该跨域请求。服务器确认允许之后，才发起实际的 HTTP 请求。在预检请<br>      求的返回中，服务器端也可以通知客户端，是否需要携带身份凭证（包括 Cookies 和 HTTP 认证相关数据）；<br>        ■HTTP 响应首部字段<br>          ◇Access-Control-Allow-Origin——响应首部中可以携带一个 Access-Control-Allow-Origin 字段，其语法如下：<br>            Access-Control-Allow-Origin: <origin> | <em>            //<origin> 参数的值指定了允许访问该资源的外域 URI；对于不需要携带身份凭证的请求，服务器可以指定该字段的值为通配符“</origin></em>”，表示允许来自所有域的请求<br>            Access-Control-Allow-Origin: <a href="http://mozilla.com" target="_blank" rel="noopener">http://mozilla.com</a>            //示例：将允许来自 <a href="http://mozilla.com" target="_blank" rel="noopener">http://mozilla.com</a> 的请求<br>          ★注意：如果服务端指定了具体的域名而非“*”，那么响应首部中的 Vary 字段的值必须包含 Origin ——这将告诉客户端，服务器对不同的源站返回不同的内容！！</origin></p>
+<pre><code>      ◇Access-Control-Expose-Headers：★注意★在跨域访问时，XMLHttpRequest对象的getResponseHeader()方法只能拿到一些最基本的响应头——Cache-Control、Content-Language、Content-Type、Expires、Last-Modified、Pragma，如果要访问其他头，则需要服务器设置本响应头！！！
+        Access-Control-Expose-Headers                    //让服务器把允许浏览器访问的头放入该白名单
+        Access-Control-Expose-Headers: X-My-Custom-Header, X-Another-Custom-Header    
+        //这样浏览器就能够通过 getResponseHeader 访问 X-My-Custom-Header 和 X-Another-Custom-Header 响应头了！
+
+      ◇Access-Control-Max-Age：Access-Control-Max-Age 头指定了 preflight 请求的结果能够被缓存多久；
+        Access-Control-Max-Age: &lt;delta-seconds&gt;                //delta-seconds 参数表示 preflight 请求的结果在多少秒内有效。
+
+      ◇Access-Control-Allow-Credentials：Access-Control-Allow-Credentials 头指定了当浏览器的 credentials 设置为 true 时是否允许浏览器读取 response 的内容；当用在对 preflight 预检测请求的响应中时，它指定了实际的请求是否可以使用credentials；
+      ★注意：简单 GET 请求不会被预检。如果对此类请求的响应中不包含该字段，这个响应将被忽略掉，并且浏览器也不会将相应内容返回给网页！！！
+        Access-Control-Allow-Credentials: true                //上文已经讨论了附带身份凭证的请求
+
+      ◇Access-Control-Allow-Methods：Access-Control-Allow-Methods 首部字段用于预检请求的响应，其指明了实际请求所允许使用的 HTTP 方法；
+        Access-Control-Allow-Methods: &lt;method&gt;[, &lt;method&gt;]*
+
+      ◇Access-Control-Allow-Headers：Access-Control-Allow-Headers 首部字段用于预检请求的响应，其指明了实际请求中允许携带的首部字段；
+        Access-Control-Allow-Headers: &lt;field-name&gt;[, &lt;field-name&gt;]*
+    ■HTTP 请求首部字段
+    ★注意：这些首部字段无须手动设置。——当开发者使用 XMLHttpRequest 对象发起跨域请求时，它们已经被设置就绪！！！
+      ◇Origin：Origin 首部字段表明预检请求或实际请求的源站；
+        Origin: &lt;origin&gt;                        //origin 参数的值为源站 URI，它不包含任何路径信息，只是服务器名称
+    ★注意：有时候将该字段的值设置为空字符串是有用的，例如，当源站是一个 data URL 时！！！
+    ★注意：不管是否为跨域请求，ORIGIN 字段总是被发送！！！
+
+      ◇Access-Control-Request-Method：Access-Control-Request-Method 首部字段用于预检请求，其作用是，将实际请求所使用的 HTTP 方法告诉服务器；
+        Access-Control-Request-Method: &lt;method&gt;
+
+      ◇Access-Control-Request-Headers：Access-Control-Request-Headers 首部字段用于预检请求，其作用是，将实际请求所携带的首部字段告诉服务器；
+        Access-Control-Request-Headers: &lt;field-name&gt;[, &lt;field-name&gt;]*
+
+◆某些请求不会触发 CORS 预检请求，这样的请求称为“简单请求”（请注意，该术语并不属于 Fetch 规范——其中定义了 CORS），若请求满足所有下述条件，则该请求可视为“简单请求”：
+    使用下列方法之一：
+        GET
+        HEAD
+        POST
+    Fetch 规范定义了对 CORS 安全的首部字段集合，不得人为设置该集合之外的其他首部字段。该集合为：
+        Accept
+        Accept-Language
+        Content-Language
+        Content-Type （需要注意额外的限制）
+        DPR
+        Downlink
+        Save-Data
+        Viewport-Width
+        Width
+    Content-Type 的值仅限于下列三者之一：
+        text/plain
+        multipart/form-data
+        application/x-www-form-urlencoded
+◆COSS 允许在下列场景中使用跨域 HTTP 请求——
+    ·前文提到的由 XMLHttpRequest 或 Fetch 发起的跨域 HTTP 请求；
+    ·Web 字体 (CSS 中通过 @font-face 使用跨域字体资源)，因此，网站就可以发布 TrueType 字体资源，并只允许已授权网站进行跨站调用；
+    ·WebGL 贴图；
+    ·使用 drawImage 将 Images/video 画面绘制到 canvas；
+    ·样式表（使用 CSSOM）；
+    ·Scripts (未处理的异常)；
+</code></pre><p>⑻H5C3（HTML5 &amp; CSS3） 新特性|API：</p>
+<p>⒈网络状态检测：<br>    新增 浏览器|window 事件：<br>    online        在线事件，当浏览器从离线状态转入在线状态时触发该事件（包括进入局域网等非互联网络）；<br>    offline        离线事件，当浏览器从在线状态转入离线状态时触发该事件（包括离开局域网等非互联网络）；<br>    window.ononline = function(event){…};<br>    window.addEventListener(‘online’, function(event){…});<br>    window.onoffline = function(event){…};<br>    window.addEventListener(‘offline’, function(event){…});</p>
+<p>⒉多媒体控件API[video|audio]：<br>  ■JS属性：<br>    ·duration        返回当前 音频/视频 的时间长度（以秒计）；<br>    ·paused        返回 音频/视频 播放是否已暂停；<br>    ·currentTime        设置或返回 音频/视频 中的当前播放位置（时间，以秒计）；<br>    ·ended            返回 音频/视频 的播放是否已经结束；</p>
+<p>  ■JS事件：<br>    ·canplay        当文件准备就绪并可以播放时触发该事件（缓冲已足够开始时）；<br>★注意：如果在 window.onload 时才设置 canplay 事件的处理函数是不会直接执行的，原因是 canplay 的含义是“是否能播放”，其触发条件是——视频有总时间的变化；<br>    当 video元素 刚开始加载的时候其 duration 为 NaN，而当请求到服务器的视频资源之后，duration 则变成此视频文件的总时间，此时就会触发一次 canplay 事件；<br>    但是如果在 window.onload 时才设置 canplay 的处理函数，若此时资源加载已经完成过了，就自然不会有总时间的变化或触发 canplay 事件！！！<br>    ·timeupdate        当播放位置 currentTime 改变时触发该事件（如正常播放过程中，或当用户使用跳转或快进操作修改当前播放位置时）；<br>    ·ended            当被播放的媒介已到达其结尾时触发该事件（可发送类似“感谢观看”之类的消息）；</p>
+<p>  ■JS方法：<br>    ·play()        开始播放；<br>    ·pause()        暂停播放；<br>    ·requestFullScreen()    全屏播放（有兼容问题），如果当前未全屏则发出请求进入全屏（异步，所以可以和退出全屏同时调用，以切换全屏状态）；<br>      webkitRequestFullScreen()    （私有方法）；<br>    ·exitFullScreen()    退出全屏（有兼容问题），如果当前已全屏则发出请求退出全屏（异步，所以可以和进入全屏同时调用，以切换全屏状态）；<br>      webkitExitFullScreen()    （私有方法）；</p>
+<p>  □其他：<br>    ◆视频全屏时去除掉默认的控制条：<br>    video::-webkit-media-controls-enclosure {<br>        /<em> 禁用播放器控制栏的样式 </em>/<br>        display: none !important;<br>    }<br>    ◆视频全屏时显示自定义的控制条：<br>    z-index: [2147483647,+∞);<br>★注意：在 CSS 中设置属性时，可以使用 calc() 来进行简单的四则运算，并用其结果来设置属性值——margin-top:calc((30px - 10px)/2);</p>
+<p>⒊WebStorage：所谓的 WebStorage 指的是 客户端存储，在这里特指的是 客户端浏览器 存储，比如在网站上自动登陆这些功能，其实就是把一些少量的数据存储在浏览器等客户端中，这样可以减少没必要的请求到服务器，<br>          降低服务器的压力，给用户提供更好的体验；</p>
+<p>◎WebStorage的方式◎<br>  ■cookie：<br>    ·广泛使用，存储量4kb左右；<br>    ·会在浏览器和服务器间传递，一般由服务器端创建，可以设置存储时间(默认和session一样)；<br>    ·cookie不容易操作，jquery.cookie.js插件；</p>
+<p>  ■sessionStorage：<br>    □特点：<br>    ·H5新增，存储量5M左右；<br>    ·只会在浏览器存储数据（浏览器的内存中），只会由浏览器端创建；<br>    ·存储时间是打开浏览器开始——关闭浏览器消失；<br>    ·方法简洁明了，容易操作；<br>    □方法：<br>    ·window.sessionStorage.setItem(key,value);        添加数据；<br>    ·window.sessionStorage.getItem(key);            获取数据；<br>    ·window.sessionStorage.removeItem(key);        移除数据；<br>    ·window.sessionStorage.clear();            清除数据；<br>    ·window.sessionStorage.key(n从0开始);            获取key；<br>    □应用场景：存储一些少量临时的数据(比较少用)；</p>
+<p>★注意：sessionStorage 与 session 不同：<br>    ◇session 是服务器端的数据存储机制，其数据直接存储在服务器的 内存 或 session 文件中，客户端无法直接获取这些信息；而 sessionStorage 则是 浏览器 里的一种新型数据存储机制，其数据直接存储<br>    在 客户端浏览器 中，可以被用户直接获取；<br>    ◇session 中存储的数据可以长久地存放在服务器上；而 sessionStorage 中存储的数据则会在 当前会话 结束时被释放；</p>
+<p>  ■localStorage：<br>    □特点：<br>    ·H5新增，存储量5M左右；<br>    ·只会在浏览器存储数据(存储在硬盘中)，只会由浏览器端创建；<br>    ·永久存储除非手动删除；<br>    ·方法简介明了，容易操作；<br>    □方法：<br>    ·window.localStorage.setItem(key,value);        添加数据；<br>    ·window.localStorage.getItem(key);            获取数据；<br>    ·window.localStorage.removeItem(key);            移除数据；<br>    ·window.localStorage.clear();                清除数据；<br>    ·window.localStorage.key(n从0开始);            获取key；<br>★注意：WebStorage中只能存储普通字符串（常用json格式）！！！</p>
+<p>⒋HTML 拖放接口（Drag and Drop API）：<br>  ■拖拽元素：被鼠标点击并 拖拽 移动的元素；<br>  ★注意：除了<img>和<a>标签之外，其他所有标签若想要成为可被拖拽的元素，都必须要给该标签设置属性 draggable = “true”；<br>    ◆拖拽事件：<br>    ·dragstart：当用户开始拖动一个“有效的” 元素 或者“可选择的” 文本 的时候，该元素上的 dragstart 事件就会被触发；<br>    ·drag：当用户完成 dragstart 之后，并持续地拖动该 元素|选择文本 的过程中，该元素上的 drag 事件会一直不停地被触发；<br>    ·dragend：当用户结束拖动一个被拖拽 元素|文本 的时候——鼠标弹起释放，该元素上的 dragend 事件就会被触发；</a></p>
+<p>  ■目标元素：拖拽元素被拖拽到的 目标位置 上的元素；<br>    ◆拖拽事件：<br>    ·dragenter：当用户拖动一个 元素|文本|文件 的状态下，（鼠标）进入该目标元素边缘范围的时候，该目标元素上的 dragenter 事件就会被触发；<br>    ·dragover：当用户拖动一个 元素|文本|文件 的状态下，（鼠标）在该目标元素的范围内悬停，该目标元素上的 dragover 事件就会 不断地 被触发；<br>          window.addEventListener(“dragover”, function (event) {<br>            event.preventDefault();<br>            …<br>         }<br>  ★注意：浏览器的 dragover 事件流中都有一个默认行为——在每次 dragover 事件流传播结束后，若有释放拖拽文件到任意元素上时，都会先在浏览器中打开所释放的文件，因而无法触发该元素上的drop事件；<br>      若在某次 dragover 事件流过程中有 任意元素 在自身的处理函数中阻止了此次的默认行为时（即执行了阻止方法），都能在该次 dragover 事件流结束后释放拖拽文件时禁止直接打开行为——即没有跳转，故能够触发被释放文件的元素上的 drop 事件！！<br>  ☆注意：dragenter|dragover|dragleave|drop 都会冒泡，所以只需要在顶层的 window 中阻止每次 dragover 的默认行为即可，不需要在每个目标元素上分别去阻止！！！<br>    ·dragleave：当用户拖动一个 元素|文本|文件 的状态下，（鼠标）离开该目标元素边缘范围的时候，该目标元素上的 dragleave 事件就会被触发；<br>    ◆释放事件：<br>    ·drop：当用户拖动一个 元素|文本|文件 ，并将其释放到一个 有效的 目标元素时，该目标元素上的 drop 事件就会被触发；<br>          targetArea.addEventListener(“drop”, function (event) {<br>            event.preventDefault();<br>            …<br>          }<br>  ★注意：浏览器的 drop 事件流中同样拥有一个默认行为——在每次 drop 事件流结束后，浏览器会打开所释放的文件——发生页面跳转，所以需要再次阻止一次默认行为！！！</p>
+<p>  ■拖拽事件对象：<br>    ◆dataTransfer属性：DataTransfer类型对象，用于保存拖放操作期间正在拖动的数据及拖动事件的状态，例如拖动的类型，拖动的数据以及每个拖动项目的类型；<br>    ·event.dataTransfer.dropEffect                获取或设置当前选定的拖放操作的类型，并能控制在拖放操作期间给用户的“光标”反馈，该值必须是none|copy|link|move；<br>    ·event.dataTransfer.effectAllowed            定义所有被允许的操作类型，该值必须是none|copy|copyLink|copyMove|link|linkMove|move|all|uninitialized；<br>    ★注意：除了 dragstart 事件外，在其他事件中设置 effectAllowed 属性的值将不会有任何作用，所以该属性必须在 dragstart 事件发生时被设置好！！！<br>    ·event.dataTransfer.files                包含数据传输中可用的所有本地文件的列表，如果拖动操作不涉及拖动文件，则此属性为空列表；<br>    ·event.dataTransfer.items                一个 DataTransferItemList 类型对象，它是所有（DataTransferItem类型）拖拽数据的列表；<br>    ·event.dataTransfer.types                一个 string 数组，提供在 dragstart 事件中 setData() 方法设置的传递数据的格式 type ；<br>    ·event.dataTransfer.setData(type,data)            设置一个给定类型 type 的数据 data ，如果该类型的数据不存在，则在最后添加，以使类型列表中的最后一项成为新的格式；如果该类型的数据已经存在，则将现有数据替换到相同的位置；<br>    ·event.dataTransfer.getData(type)            检索给定类型 type 的对应数据，如果该类型的数据不存在或者数据传输不包含数据，则返回空字符串””；<br>    ·event.dataTransfer.clearData([type])            删除与给定类型 type 相关的数据，类型参数是可选的——如果类型 type 为 “” 空或 未指定 ，则删除与所有类型关联的数据；如果指定类型的数据不存在，或者数据传输不包含数据，则此方法将不起作用；<br>    ·event.dataTransfer.setDragImage(img,Xoffset,Yoffset)    发生拖动时，会从拖动目标（dragstart事件的触发元素）生成半透明图像，并在拖动过程中跟随鼠标指针；这个图像是自动创建的，所以你不需要自己创建它，但是，如果需要自定义图像，则可以使用 DataTransfer.setDragImage() 方法来设置要使用的自定义图像；</p>
+<p>⒌文件读取 API：<br>  ■FileReader 对象：FileReader 类型的实例对象允许 Web应用程序 异步 读取存储在用户计算机上的文件（或原始数据缓冲区）的内容，可使用 File 或用 Blob 对象指定要读取的文件或数据；<br>    ◆构造函数：<br>    var fr = new FileReader();<br>    ◆FileReader 实例对象的属性及方法：<br>    ·FileReader.prototype.error                一个 DOMException 对象，代表在读取文件中出现的错误；<br>    ·FileReader.prototype.readyState            一个表示 FileReader 状态的数字，0 EMPTY 尚未加载任何数据，1 LOADING 数据正在加载，2 DONE 整个读取请求已完成；<br>    ·FileReader.prototype.result                文件的内容，该属性仅在读取操作完成后才有效，数据的格式取决于使用哪个方法来启动读取操作；<br>    ·FileReader.prototype.onabort                abort事件的处理程序，每当读取操作中止时，都会触发此事件；<br>    ·FileReader.prototype.onerror                error事件的处理程序，每次读取操作遇到错误时都会触发此事件；<br>    ·FileReader.prototype.onload                load事件的处理程序，每次读取操作成功完成时触发该事件；<br>    ·FileReader.prototype.onloadstart            loadstart事件的处理程序，每次阅读开始时都会触发此事件；<br>    ·FileReader.prototype.onloadend            loadend事件的处理程序，每次读取操作完成（成功或失败）都会触发此事件；<br>    ·FileReader.prototype.onprogress            progress事件的处理程序，阅读Blob内容时触发此事件；<br>    ·FileReader.prototype.abort()                中止读取操作，函数返回后，readyState会变为DONE；<br>    ·FileReader.prototype.readAsArrayBuffer(file)        开始读取指定Blob的内容，一旦完成，result属性包含一个ArrayBuffer表示文件的数据；<br>    ·FileReader.prototype.readAsBinaryString(file)        开始读取指定Blob的内容，一旦完成，result属性包含文件中的原始二进制数据作为字符串；<br>    ·FileReader.prototype.readAsDataURL(file)        开始读取指定Blob的内容，一旦完成，result属性包含一个代表文件数据的data:URL；<br>    ·FileReader.prototype.readAsText(file)            开始读取指定Blob的内容，一旦完成，该result属性包含文件的内容作为文本字符串；<br>  ★注意：以上读取的文件对象可以从用户选择上传文件所使用的 <input> 元素的 files 属性（ FileList 类型）中获取，或从拖放操作中的 DataTransfer 对象的 files 属性或从 mozGetAsFile() API上的 返回的对象中获得 HTMLCanvasElement！！！<br>    ◆使用 FileReader 的实例对象读取文件的方法（异步）：<br>    ·准备读图片：<br>    fr.readAsDataURL(file);                //result属性中将包含一个data:URL格式的字符串以表示所读取文件的内容；<br>    ·准备读文本：<br>    fr.readAsText(file);                //result属性中将包含一个字符串以表示所读取的文件内容；<br>    ·等待读取操作完成(异步事件)：<br>    fr.onload = function(event){…}        //当读取操作成功完成时调用；<br>    ·通过event.result属性获取文件内容：<br>    console.log(this.result);            //如果调用readAsText()方法，获取的是——一段纯文本字符串；<br>    console.log(this.result);            //如果调用readAsDataURL()方法，获取的是——一段base64编码的URL，该字符串可以直接当作url使用，并且其中包含了图片的全部编码信息；</p>
+<p>⒍地理定位 API：<br>  ■Geolocation ：可以使得 Web 应用程序获得用户提供的地理位置信息；<br>  ☆注：地理定位是隐私信息，所以获取地理定位信息的时候，浏览器会询问你是否允许——如果不允许，那么就禁止，否则允许；<br>      ◇地理定位方式：<br>        ·GPS定位        特别精确，但是花的时间比较长；<br>        ·手机信号(4G)定位    非常精确，安卓可以，iOS禁止权限；<br>        ·Wifi定位        比较精确，在无网络地区比较难以实现；<br>        ·浏览器定位        非常不精确；<br>        ·IP定位        最不精确；<br>      ◆获取一次地理位置的方法(回调)：<br>    window.navigator.geolocation.getCurrentPosition(成功时的回调,失败时的回调,参数设置);<br>    window.navigator.geolocation.getCurrentPosition(function success(position){<br>            //position.coords{<br>            //latitude        纬度，例如latitude:23.13188<br>            //longitude        经度，例如longitude:113.421895<br>            //altitude        高度(海拔)<br>            //accuracy        (位置)精确度<br>            //altitude Accuracy    (海拔高度)精确度<br>            //heading        行进方向<br>            //speed            地面速度<br>            //}<br>    }, function fail(error){<br>            // erroe.code:<br>            // 0            不包括其他错误编号中的错误<br>            // 1            用户拒绝浏览器获取位置信息<br>            // 2            尝试获取用户信息，但失败了<br>            // 3            设置了timeout值，获取位置超时了<br>    }, options);<br>            //{<br>            //enableHighAcuracy    更精确的查找，默认false<br>            //timeout        获取位置允许最长时间，默认infinity，单位是毫秒<br>            //}<br>      ◆实时获取地理位置的方法(回调)：<br>    window.navigator.geolocation.watchPosition(成功时的回调,失败时的回调,参数设置);<br>    var watchID = window.navigator.geolocation.watchPosition(function(){},function(){},options);<br>    navigator.geolocation.clearWatch(watchID);</p>
+<p>⒎Canvas 元素：<canvas> 元素在 HTML5 中被标准化，不过 IE9 之前的浏览器并不支持 <canvas> 元素；<br>    ·<canvas>元素自身是没有任何外观的，但是它在文档中创建了一个画板，同时还提供了很多强大的绘制客户端 JavaScript 的API；<br>    ·<canvas>元素和 SVG 之间一个重要的区别是——使用 canvas 来绘制图形是通过调用它提供的方法，而使用 SVG 绘制图形是通过构建一棵 XML 元素树来实现的；<br>    ·<canvas>元素的绘制 API 是基于 JavaScript 的，<canvas> 本身不能绘图，只能使用 JavaScript 来完成绘图；</canvas></canvas></canvas></canvas></canvas></canvas></p>
+<p>  ■布置画布元素：<br>    <canvas width="600" height="400"> 您的浏览器版本不支持Canvas,请升级您的浏览器</canvas><br>    //如果浏览器不支持 canvas 标签，那么就会将其解释为 div 标签，因此常常在canvas中嵌入文本,以提示用户去升级浏览器<br>    //canvas元素的默认 HTML 宽高属性为：width = “300”，height = “150”<br>    //canvas元素是根据其 HTML 标签中的 width 和 height 属性来决定其中的逻辑像素点个数<br>    //CSS中虽然可以改变 canvas 元素的大小，但是却无法改变其中的像素个数——即使用CSS设置canvas的宽高会造成其中像素点的放大或缩小以及图像扭曲<br>    //所以不要使用CSS的方式设置宽高，应该使用HTML属性width|height</p>
+<p>  ■画布栅格及坐标空间：canvas元素默认被网格所覆盖，通常来说网格中的一个单元相当于canvas元素中的一像素；<br>            栅格的原点为左上角(0,0)，所有元素的位置都相对于原点定位(x,y)；</p>
+<p>  ■画布绘制 API：大部分的绘制 API 都不是在 <canvas> 元素自身的对象上定义的，而是定义在一个“绘制上下文”对象上；<br>    ◆CanvasRenderingContext2D 类型上下文：<br>        var context = canvas.getContext(‘2d’);                        //获得一个CanvasRenderingContext2D 类型的渲染对象，使用该对象上的方法便可以在画布上绘制二维图形</canvas></p>
+<pre><code>·绘制路径：图形的基本元素是路径——路径是通过不同颜色和宽度的线段或曲线相连形成的不同形状的点的集合；一个路径(Path)，甚至一个子路径(线Line、弧Arc等)，都是闭合的；
+        使用路径绘制图形需要一些特定的步骤：
+        1.首先，你需要创建路径起始点；
+        2.然后你使用画图命令去画出路径；
+        3.之后你把路径封闭；
+        4.一旦路径生成，你就能通过描边或填充路径区域来渲染图形；
+
+    context.beginPath();                                //新建一条路径，生成之后，图形绘制命令被指向到路径上生成路径
+    context.closePath();                                //闭合路径之后图形绘制命令又重新指向到上下文中
+    context.stroke();                                //通过线条来绘制图形轮廓
+    context.fill();                                    //通过填充路径的内容区域生成实心的图形
+★注意：本质上，路径是由很多子路径构成，而这些子路径都是在一个列表中——所有的子路径（线、弧形等等）构成图形；
+    而每次这个beginPath()方法被调用之后，子路径列表就会清空重置，然后就可以重新绘制新的图形！！！
+★注意：当你调用fill()函数时，所有没有闭合的形状都会自动被当作已闭合（即连接当前位置到最初起点），所以不需要调用closePath()函数，但是调用stroke()时不会自动闭合！！！
+
+·移动笔触：
+    context.moveTo(x, y);                                //将笔触移动到指定的坐标x以及y上，这个函数实际上并不能画出任何东西
+
+·绘制直线：
+    context.lineTo(x, y);                                //绘制一条从当前位置到指定x以及y位置的直线
+
+·绘制圆弧|圆：
+    context.arc(x, y, radius, startAngle, endAngle, anticlockwise);            //画一个以(x,y)为圆心、以 radius 为半径、从 startAngle 开始到 endAngle 结束的圆弧|圆，并按照 anticlockwise 给定的方向（默认为顺时针）来生成（默认自动连接当前位置与该圆弧的起点）
+    context.arcTo(x1,y1,x2,y2,radium);                        //根据给定的控制点（当前位置和P1、P1和P2）连接两条直线作为切线，以半径 radium 画一段圆弧，该圆弧从一个切点到另一个切点（默认自动连接当前位置与该圆弧的第一个切点）
+★注意：arc()函数中的角度单位是 弧度，而不是度数——角度与弧度制转换的 JS 表达式：radians=(Math.PI/180)*degree！！！
+
+·绘制矩形（需路径）；
+    context.rect(x, y, width, height);                        //绘制一个左上角坐标为（x,y），宽高为width以及height的矩形
+★注意：当该方法执行的时候，moveTo()方法自动设置坐标参数(0,0)。也就是说，当前笔触自动重置回默认坐标！！！
+·绘制原生矩形（不需路径）：
+    context.fillRect(x, y, width, height);                        //绘制一个填充的矩形
+    context.strokeRect(x, y, width, height);                    //绘制一个矩形的边框
+    context.clearRect(x, y, width, height);                        //清除指定矩形区域，让清除部分完全透明
+
+□Path2D 对象：Path2D()方法会返回一个新初始化的 Path2D对象，用来缓存或记录绘画命令；
+           可以将某一个路径作为参数传递，以创建一个它的副本；或者将一个包含SVG path数据的字符串作为变量来进行初始化；
+           所有的路径方法比如moveTo, rect, arc或quadraticCurveTo等，都可以在Path2D中使用；
+    var path2D = new Path2D();                            //空的Path对象
+    var path2D = new Path2D(path);                            //克隆Path对象
+    var path2D = new Path2D(string);                        //从SVG建立Path对象
+    path2D.addPath(path [, transform])​;                        //添加了一条路径到当前路径（可能添加了一个变换矩阵）
+</code></pre><p>  ■添加样式和颜色：<br>    ◆色彩 Colors：<br>        context.fillStyle = color || linearGradient || radialGradient;            //设置图形的填充颜色，可以是表示 CSS 颜色值的字符串，渐变对象或者图案对象，默认情况下，线条和填充颜色都是黑色#000000<br>        context.strokeStyle = color|| linearGradient || radialGradient;            //设置图形轮廓的颜色，可以是表示 CSS 颜色值的字符串，渐变对象或者图案对象，默认情况下，线条和填充颜色都是黑色#000000</p>
+<pre><code>·透明度 Alpha：
+    globalAlpha = transparencyValue;                        //该属性将影响到 canvas 里所有图形的透明度，有效的值范围是(0.0)完全透明到(1.0)完全不透明，默认是 1.0
+
+·渐变 Gradients：
+    var linearGradient = context.createLinearGradient(x1, y1, x2, y2);        //createLinearGradient()方法接受 4 个参数，表示渐变的起点 (x1,y1) 与终点 (x2,y2)，起点与终点两端外的部分是纯色（与该渐变方向垂直的线上都是同一颜色）
+    linearGradient.addColorStop(position, color);                    //addColorStop()方法接受 2 个参数，position 参数必须是一个 0.0 与 1.0 之间的数值，表示渐变中颜色所在的相对位置，color 参数必须是一个有效的 CSS 颜色值
+    var radialGradient = context.createRadialGradient(x1, y1, r1, x2, y2, r2);    //createRadialGradient()方法接受 6 个参数，前三个定义一个以 (x1,y1) 为原点，半径为 r1 的圆，后三个参数则定义另一个以 (x2,y2) 为原点，半径为 r2 的圆，分别表示渐变的起点线与终点线（类似于线性渐变，范围外的部分是纯色）
+    radialGradient.addColorStop(position, color);                    //同上
+
+◆线形 Line styles：
+    context.lineWidth = value;                            //设置线条宽度，默认值是1.0，线宽是指给定路径的中心到两边的粗细——换句话说就是在路径的两边各绘制线宽的一半
+    context.lineCap = &quot;butt&quot; || &quot;round&quot; || &quot;square&quot;;                //设置线条末端样式，默认是&quot;butt&quot;——与辅助线齐平，&quot;round&quot;——端点处加上了半径为一半线宽的半圆，&quot;square&quot;——端点处加上了等宽且高度为一半线宽的方块 
+    context.lineJoin = &quot;round&quot; || &quot;bevel&quot; || &quot;miter&quot;;                //设定线条与线条间接合处的样式，默认是&quot;miter&quot;——线段会在连接处外侧延伸直至交于一点，延伸效果受到 miterLimit 属性的制约，&quot;round&quot;——边角处被磨圆了，圆的半径等于线宽，&quot;bevel&quot;——边角处被磨平了
+    context.miterLimit = value;                            //miterLimit属性 是用来设定外延交点与连接点的最大距离，如果交点距离大于此值，连接效果会变成了&quot;bevel&quot;
+    context.getLineDash();                                //
+    context.setLineDash([line,gap,line,gap,...]);                    //setLineDash()方法接受一个数组，来指定线段与间隙的交替距离，对超出长度的线段部分重复使用该数组——第一次使用时数组首个元素表示的是线段长度，而当数组元素为奇数个时，对于超出部分而言数组的第一个元素表示的是间隙长度
+    context.lineDashOffset = value;                            //lineDashOffset 属性设置起始偏移量
+</code></pre><p>  ■绘制文本：<br>    ◆绘制方法：<br>        context.fillText(text, x, y [, maxWidth]);                    //在指定的(x,y)位置填充指定的文本，绘制的最大宽度是可选的<br>        context.strokeText(text, x, y [, maxWidth]);                    //在指定的(x,y)位置绘制文本边框，绘制的最大宽度是可选的<br>    ◆设置文本样式：<br>        context.font = value;                                //当前我们用来绘制文本的样式，这个字符串使用和 CSS font 属性相同的语法，默认的字体是 10px sans-serif<br>        context.textAlign = “start”||”end”||”left”||”right”||”center”;            //文本对齐选项，默认值是 start<br>        context.textBaseLine = “top”||”hanging”||”middle”||”alphabetic”||”ideographic”||”bottom”;//基线对齐选项，默认值是 alphabetic<br>        context.direction = “ltr”||”rtl”||”inherit”;                    //文本方向，默认值是 inherit<br>    □先进的文本测量：<br>        context.measureText(text);                            //将返回一个 TextMetrics对象 的宽度、所在像素等，这些体现文本特性的属性</p>
+<p>  ■绘制图片：<br>    ◆获得需要绘制的图片（参数）：<br>      Canvas的 API 可以使用下面这些类型中的一种作为图片的源：这些源统一由 CanvasImageSource 类型来引用；<br>        HTMLImageElement    这些图片是由Image()函数构造出来的，或者任何的<img>元素；<br>        HTMLVideoElement    用一个HTML的 <video>元素作为你的图片源，可以从视频中抓取当前帧作为一个图像；<br>        HTMLCanvasElement    可以使用另一个 <canvas> 元素作为你的图片源；<br>        ImageBitmap        这是一个高性能的位图，可以低延迟地绘制，它可以从上述的所有源以及其它几种源中生成；<br>    ·使用相同页面内的图片：    document.images | document.getElementsByTagName() | document.getElementById()；<br>    ·使用其它域名下的图片：    在 HTMLImageElement 上使用 crossOrigin 属性，可以请求加载其它域名上的图片；<br>    ·使用其它 canvas 元素：    和引用页面内的图片类似地，引入已经准备好的 canvas；<br>    ·由零开始创建图像：        使用 Image() 构造函数，创建一个新的 HTMLImageElement 对象，★注意要用 load 事件来保证不会在加载完毕之前使用这个图片；<br>    ·通过 data:url 方式嵌入图像：    Data urls 允许用一串 Base64 编码的字符串的方式来定义一个图片；<br>    ·使用视频帧：            使用 <video> 中的视频帧（即便视频是不可见的）；</video></canvas></video></p>
+<pre><code>◆绘制图片：
+    context.drawImage(image, x, y);                            // image 是 image 或者 canvas 对象，x 和 y 是其在目标 canvas 里的起始坐标
+    context.drawImage(image, x, y, width, height);                    // width 和 height，这两个参数用来控制当向 canvas 画入时应该缩放的大小
+    context.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);    // 前4个参数是定义切片在图像源上的位置和大小，后4个参数则是定义图像源切片在 canvas 画布上的位置和大小
+</code></pre><p>  ■变形：<br>    ◆状态的保存和恢复 Saving and restoring state：<br>    ·Canvas 的状态就是当前画面应用的所有样式和变形的一个快照；<br>    ·一个完整的绘画状态包括：<br>        →当前应用的变形（移动，旋转和缩放）；<br>        →strokeStyle, fillStyle, globalAlpha, lineWidth, lineCap, lineJoin, miterLimit, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor, globalCompositeOperation 的值；<br>        →当前的裁切路径（clipping path）；<br>    ·Canvas 的状态存储在 栈 中，每当 save() 方法被调用后，当前的状态就被推送到栈中保存；每一次调用 restore() 方法，上一个保存的状态就从 栈 中弹出，所有设定都恢复；</p>
+<pre><code>◆移动 Translating：
+    context.translate(x, y);                            //translate()方法用来移动 canvas 和它的原点到一个不同的位置
+
+◆旋转 Rotating：
+    context.rotate(angle);                                //rotate()方法用于以原点为中心旋转 canvas，旋转的角度(angle)是以canvas的原点为中心，x轴正向为起点，顺时针方向为正方向的，以弧度为单位的值
+
+◆缩放 Scaling：
+    context.scale(x, y);                                //scale()方法用来增减图形在 canvas 中的像素数目，对形状或位图进行缩小或者放大，x,y 分别是横轴和纵轴的缩放因子，它们都必须是正值——值比 1.0 小表示缩小，比 1.0 大则表示放大，值为 1.0 时什么效果都没有
+                                            //默认情况下，canvas 的 1 单位就是 1 个像素，如果我们设置缩放因子是 0.5，1 个单位就变成对应 0.5 个像素，这样绘制出来的形状就会是原先的一半。同理，设置为 2.0 时，1 个单位就对应变成了 2 像素，绘制的结果就是图形放大了 2 倍
+◆变形 Transforms：                                                                           ┏ m11 m21 dx ┓
+    context.transform(m11, m12, m21, m22, dx, dy);                    //transform()方法将当前的变形矩阵乘上一个基于自身参数的矩阵，用下面的矩阵：┃ m12 m22 dy ┃；
+                                                                                   ┗  0   0  1  ┛
+</code></pre><p>  ■非零环绕原则：判断一个点是在所绘制的图形内部，还是在图形外部——内部的点才可以通过fill()方法填充指定颜色；</p>
+<pre><code>◆在图形学中判断一个点是否在多边形内：
+    ·若多边形不是自相交的，那么可以简单的判断这个点在多边形内部还是外部；
+    ·若多边形是自相交的，那么就需要根据非零环绕数规则和奇-偶规则判断；
+
+◆判断多边形是否是自相交的——多边形在平面内除顶点外还有其他公共点：
+    ·不自交的多边形：多边形仅在顶点处连接，而在平面内没有其他公共点，此时可以直接划分内-外部分；
+    ·自相交的多边形：多边形在平面内除顶点外还有其他公共点，此时划分内-外部分需要采用以下的方法；
+
+◆内-外测试：
+    ·奇-偶规则(Odd-even Rule)：奇数表示在多边形内，偶数表示在多边形外；
+        从任意位置p作一条射线，若与该射线相交的多边形边的数目为奇数，则p是多边形内部点，否则是外部点；
+
+    ·非零环绕数规则(Nonzero Winding Number Rule)：若环绕数为0表示在多边形外，非零表示在多边形内；
+        1.首先使多边形的边变为矢量，将环绕数初始化为零；
+        2.再从任意位置p作一条射线，当从p点沿射线方向移动时，对在每个方向上穿过射线的边计数，每当多边形的边从右到左穿过射线时，环绕数加1，从左到右时，环绕数减1：
+        3.处理完多边形的所有相关边之后，若环绕数为非零，则p为内部点，否则，p是外部点；
+</code></pre><p>㈢移动WEB开发：</p>
+<p>⑴移动端设备概述：<br>  设备参数：<br>    ■触摸屏类型：XXX 多点触控（区别：PC端只有一点——光标）；<br>    ■主屏尺寸：屏幕对角线的长度，常用单位：1英寸|1in|1inch[英制] = 2.54cm；<br>    ■主屏分辨率[物理|设备分辨率]：屏幕上总的物理像素点个数——通常用长宽方向上的像素点个数之积 widthPX×heightPX 来表示，是屏幕设备的固有属性之一，单位：物理像素（1 物理像素 代表了屏幕上的 1 个 实际发光单元/发光点）；<br>        ◆获取屏幕分辨率：<br>        ·window.screen.width;<br>        ·window.screen.height;<br>    □逻辑分辨率：屏幕在显示数据内容时所表示出的“逻辑上”的颜色点个数——通常用与物理分辨率相同的形式表示，是由操作系统来进行控制的，单位：逻辑像素（1 逻辑像素 代表了屏幕上的 1 个 颜色数据单元/颜色点）；<br>      例如：在 PC端 操作系统中，可以修改屏幕分辨率（★移动端不可以）——实质上只是修改了逻辑分辨率，而降低该分辨率时其实就是用更多个“物理”上的像素（发光点）来显示一个“逻辑”上的像素（颜色数据）；<br>        ·用多个“物理”像素来表示一个“逻辑”数据，所显示的该图像会比默认情况下显示地更大，但却会造成图像的——模糊！！！<br>        ·用一个“物理”像素来表示多个“逻辑”数据，所显示的该图像会比默认情况下显示地更小，虽然部分颜色数据丢失了，但图像整体仍然是——清晰！！！<br>    ★长度单位：在移动端软件的开发过程中所使用的所有长度单位共分为如下两大类——<br>        ·绝对长度单位——不会随着使用环境的改变而变化，如cm，inch，dp（安卓app开发），pt（苹果app开发），[逻辑]px（移动WEB开发）等；<br>        ·相对长度单位——随着使用的地方不同，该单位对应的实际大小会发生变化，如%，em，rem，[物理]px（对应设备分辨率的物理像素中 1px 是相对长度单位，根据屏幕PPI的不同而不同）等；<br>    ★注意：移动端 WEB 应用开发过程中 CSS 布局所使用的 px 长度单位对应的是 [逻辑] 像素点——设备独立像素！！！<br>        该 [逻辑] 像素点对应的 [物理] 像素点根据设备的不同而不同，可能 1px &lt; 1px，1px = 1px，1px &gt; 1px！！！<br>    ■屏幕像素密度[PPI|PixelPerInch]：屏幕对角线平行方向单位英寸上的物理像素点个数——PPI = (²√(widthPixel)²+(heightPixel)²)/主屏尺寸，单位：ppi；<br>        密度等级：<br>        ◆ldpi : mdpi : hdpi : xhdpi : xxhdpi = 0.75 : 1 : 1.5 : 2 : 3 = 120 : 160 : 240 : 320 : 480;</p>
+<p>⑵设备独立像素[DP|PT|PX]：安卓移动开发[dp]|苹果IOS移动开发[pt]|移动WEB开发[px]中常用的一种绝对长度单位—— [逻辑] 像素，可以在屏幕像素密度 PPI 不同的设备上让图片显示为相同的实际大小，这是由于<br>        该单位的长度会根据操作系统所提供的 ppi 数值来换算为实际显示的 [物理]像素 px，在高清屏幕上换算的 px 像素点数多，低清晰度的屏幕上换算的 px 像素点少，而最终实际显示的尺寸则完全相同；<br>        ◆1dp 表示在屏幕像素点密度为 160ppi 时[物理] 1px 的长度—— 1dp = (屏幕ppi / 160)px；<br>        ·px [pixel]：像素，电子屏幕上组成一幅图画或照片的最基本物理单元；<br>        ·pt [point]：点，印刷行业或 PS 制图中常用的单位，打印或画布分辨率为 72ppi|72dpi 时 1px 的长度——1pt= (DPI / 72) px（当 72ppi 时，1pt=1px，当分辨率为 144ppi 时，1pt=2px）；<br>        ·ppi[pixel per inch]：每英寸像素数，该值越高，则屏幕显示越细腻（显示图片使用，dpi=ppi）；<br>        ·dpi[dot per inch]：每英寸打印点数，该值越高，则打印图片越细腻（打印图片使用，dpi=ppi）；<br>        ·dp [dip，density-independent pixel]：设备独立像素，是安卓开发用的长度单位；<br>        ·sp [scale-independent pixel]：安卓开发用的字体大小单位；<br>  ★注意：使用 设备独立像素 dp|pt|px 进行布局时，虽然能使相同的图片显示为相同的大小，但假设某图片大小与其逻辑尺寸相同，在低分辨率屏幕（1dp=1px）上正好能清晰显示该图片，而到了高分辨率屏幕（1dp=2px）<br>      上则会显得图像模糊——因为用了多于[逻辑]像素点的[物理]像素来显示该图片，所以开发中通常会使用 二倍图/三倍图（即要把图片制作成其 [逻辑] 尺寸的 2 倍）来进行使用，目的是让图片既能<br>      在高分屏上清晰显示，而且在低分屏上通过一个[物理]像素表示多个[逻辑]色值时也并不会使图像变模糊！！！<br>        ◆获取设备独立像素比[dp/px]：<br>        ·window.devicePixelRatio;</p>
+<p>⑶视口（viewport）：</p>
+<pre><code>■视口概念：
+视口——是用来约束网页中的最顶级块元素 html 的，它决定了 html 元素的大小（即设置html的width为100%时，就是取的视口宽度）；
+·视窗布局视口(layout viewport)：设置网页布局区域的大小(以CSS像素为单位)——html的大小；
+
+
+·理想视口(ideal viewport)：是指设备的屏幕区域——屏幕大小；
+
+·移动设备上浏览器会默认设置一个 layout viewport，并且这个值会大于 ideal viewport，于是就出现了滚动条；
+·某厂商认为将网页完整显示给用户才最合理，而不该出现滚动条，所以就将 layout viewport 进行了缩放，使其恰好完整显示在 ideal viewport(屏幕)里，而其缩放比例为 ideal viewport/layout viewport；
+
+■设置视口：
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1.0&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,height=N,initial-scale=1.0,maximum-scale=N,minimum-scale=N,user-scalable=yes|no&quot;&gt;
+·width        设置 layout viewport 的宽度(带单位)，为一个正整数或字符串&quot;device-width&quot;
+</code></pre><p>；<br>    ·height    设置 layout viewport 的高度(带单位)，这个属性并不重要，很少使用</p>
+<p>；<br>    ·initial-scale    设置页面的初始缩放值(倍数)，为一个数字</p>
+<p>；<br>    ·maximum-scale    允许用户的最大缩放值(倍数)，为一个数字</p>
+<p>；<br>    ·minimum-scale    允许用户的最小缩放值(倍数)，为一个数字</p>
+<p>；<br>    ·user-scalable    否允许用户进行缩放，值为”no”或”yes”, no 代表不允许，yes代表允许；</p>
+<pre><code>■视口作用：
+·在 PC设备 上，viewport的大小取决于浏览器窗口的大小，并以CSS像素做为度量单位；
+·在 移动端 上，viewport的大小不再受限于浏览器的窗口，而是允许开发人员自由设置，不过浏览器会设置一个默认大小的viewport，为了能够正常显示那些专为PC设计的网页，一般这个值的大小会大于屏幕本身的尺寸；
+·所以，在开发移动端专属的WEB应用时，如果需要适配屏幕宽度，则必须主动设置 视口宽度width 为 设备宽度device-width；
+</code></pre><p>⑷移动端布局：<br>  ■像素布局：</p>
+<p>  ■百分比布局：</p>
+<p>  ■rem布局：</p>
+<p>  ■响应式布局：</p>
+<p>⑸移动端事件：现在随着移动设备的出现，鼠标事件不能够满足多指触控的事件需求，再加上 click 点击事件在移动端存在延迟，因此在移动端出现了移动端事件——TouchEvent；<br>          TouchEvent 是一类描述手指在触摸平面（触摸屏、触摸板等）的状态变化的事件，这类事件用于描述一个或多个触点，使开发者可以检测触点的移动，触点的增加和减少等等。<br>  ■touchEvent 类型：<br>    ·touchstart            当用户在触摸平面上放置了一个触点时触发；<br>    ·touchmove            当用户在触摸平面上移动触点时触发；<br>    ·touchend            当一个触点被用户从触摸平面上移除（当用户将一个手指离开触摸平面）时触发；</p>
+<p>  ■touchEvent 事件对象：<br>    ·event.touches            屏幕上所有 touch触点 的伪数组(touchList)；<br>    ·event.targetTouches        绑定事件的元素上所有 touch触点 的伪数组(touchList)；<br>    ·event.changedTouches        相对于上一次状态发生了改变（进入目标元素、离开目标元素、在目标元素上发生了移动）的触摸点的集合；</p>
+<p>  ★注意：在 touchend 事件里面，只能通过 changedTouches 获取离开目标元素的手指触点！！！<br>      ·最后有可能有一个离开了屏幕，只会在 changedTouches 中存在一个触点的数据；<br>      ·最后有可能有两个同时离开了屏幕，就会在 changedTouches 中存在两个触点的数据…；</p>
+<p>  ■touch 对象：<br>    ·touch.clientX/clientY        相对于浏览器可视区域(屏幕)的坐标，想要获取正确的结果必须写全 viewport 的设置（width+initial-scale+maximum-scale+minimum-scale+user-scalable）；<br>    ·touch.pageX/pageY        相对于页面的坐标，页面有多大，坐标的最大值就有多大，但是想要看到这个结果——必须写全viewport的设置（width+initial-scale+maximum-scale+minimum-scale+user-scalable）；<br>        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"><br>    ·touch.screenX/screenY        相对于屏幕的坐标（谷歌下是相对于屏幕|火狐下是和clientX/Y是一样的）；</p>
+<p>  □click延迟：click事件在移动手机开发中有 约300ms 的延迟，因为在手机出现的早期，浏览器系统有放大和缩放功能，用户在屏幕上点击两次之后，系统会触发放大或者缩放功能，因此系统做了一个处理，当触摸一次后，<br>           会在之后的 300ms 这段时间内判断有没有触摸第二次——如果触摸了第二次的话，说明是触发放大或缩放功能；否则的话是click事件；<br>           因此当click时候，所有用户必须等待 约300ms 后才会触发click事件，所以当在移动端使用 click事件 的时候，会感觉到有300ms的迟钝；<br>           准确来讲，click 的延时不是精确的300ms，而只是一个习惯性的名称——因为用户通过正常的点击，click事件大概在 300ms 之后的时候触发(一般情况下，大概在200-300ms左右)。</p>
+<p>⑹Zepto类库：Zepto 是一个轻量级的针对现代高级浏览器的 JavaScript 库， 它与 jQuery 有着类似的 API，所以可以简单地认为 Zepto(移动端) === jQuery(PC端)！！！<br>     ★注意：Zepto 的设计目的是提供 jQuery 的类似的API，但并不是 100% 全覆盖 jQuery；<br>         Zepto 的设计目的是有一个 5-10k 的通用库、能下载并快速执行、并有一个熟悉通用的API，所以才能把精力放到应用开发上！！！</p>
+<p>  ■Zepto 模块：<br>    Module        Default        Description<br>    zepto           ✔        核心模块，包含许多方法；<br>    event           ✔        默认模块，通过on() &amp; off()处理事件；<br>    ajax           ✔        默认模块，XMLHttpRequest 和 JSONP 实用功能；<br>    form           ✔        默认模块，序列化 &amp; 提交web表单；<br>    ie           ✔        默认模块，增加支持桌面的Internet Explorer 10+和Windows Phone 8；<br>    detect                提供 $.os和 $.browser消息；<br>    fx                The animate()方法；<br>    fx_methods            以动画形式的 show, hide, toggle, 和 fade*()方法；<br>    assets                实验性支持从DOM中移除image元素后清理iOS的内存；<br>    data                一个全面的 data()方法, 能够在内存中存储任意对象；<br>    deferred            提供 $.Deferredpromises API. 依赖”callbacks” 模块. 当包含这个模块时候, $.ajax() 支持promise接口链式的回调；<br>    callbacks            为”deferred”模块提供 $.Callbacks；<br>    selector            实验性的支持 jQuery CSS 表达式 实用功能，比如 $(‘div:first’)和 el.is(‘:visible’)；<br>    touch                在触摸设备上触发tap– 和 swipe– 相关事件。这适用于所有的<code>touch</code>(iOS, Android)和<code>pointer</code>事件(Windows Phone)；<br>    gesture                在触摸设备上触发 pinch 手势事件；<br>    stack                提供 andSelf&amp; end()链式调用方法；<br>    ios3                String.prototype.trim 和 Array.prototype.reduce 方法 (如果他们不存在) ，以兼容 iOS 3.x；<br>  ★注意：Zepto 的一些 可选功能 是专门针对 移动端 浏览器的，因为它的最初目标是在 移动端 提供一个精简的类似 jQuery 的 JavaScript 库！！！<br>      Zepto 希望在所有的现代浏览器中作为一种基础环境来使用，故 Zepto 不支持旧版本的 Internet Explorer 浏览器(IE&lt;10)！！！</p>
+<p>  ■自定义Zepto：官方网站提供了 Zepto 的默认发行版的下载，这在刚开始是很好的选择。但是，在某些时候，如果需要添加一些可选模块，并删除一些不需要的默认模块，以尽可能减小尺寸，那时便需要检查 Zepto 的源代码并使用 Build 命令；<br>    ·首先需要在系统上安装 Node.js；</p>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2014/03/03/JavaScript学习笔记02/" title= JavaScript学习笔记 二 >
+                    <div class="nextTitle">JavaScript学习笔记 二</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2014/02/28/Emmet语法大全/" title= Emmet语法大全 >
+                    <div class="prevTitle">Emmet语法大全</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:JasonExtremity@163.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/IAmJasonXu" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title="rss"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JavaScript学习笔记-·-一"><span class="toc-number">1.</span> <span class="toc-text">JavaScript学习笔记 · 一</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> Total : 18 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/02</span><a class="archive-post-title" href= "/2017/02/02/ECMAScript-6th归纳总结/" >ECMAScript 6th归纳总结</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2014 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/21</span><a class="archive-post-title" href= "/2014/05/21/ECMAScript-5th归纳总结/" >ECMAScript 5th归纳总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/08</span><a class="archive-post-title" href= "/2014/03/08/JavaScript学习笔记05/" >JavaScript学习笔记 五</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/07</span><a class="archive-post-title" href= "/2014/03/07/JavaScript学习笔记04/" >JavaScript学习笔记 四</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/05</span><a class="archive-post-title" href= "/2014/03/05/JavaScript学习笔记03/" >JavaScript学习笔记 三</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/2014/03/03/JavaScript学习笔记02/" >JavaScript学习笔记 二</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/02</span><a class="archive-post-title" href= "/2014/03/02/JavaScript学习笔记01/" >JavaScript学习笔记 一</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/28</span><a class="archive-post-title" href= "/2014/02/28/Emmet语法大全/" >Emmet语法大全</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/27</span><a class="archive-post-title" href= "/2014/02/27/CSS学习笔记05/" >CSS学习笔记 五</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/26</span><a class="archive-post-title" href= "/2014/02/26/CSS学习笔记04/" >CSS学习笔记 四</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2014/02/25/CSS学习笔记03/" >CSS学习笔记 三</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/24</span><a class="archive-post-title" href= "/2014/02/24/CSS学习笔记02/" >CSS学习笔记 二</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/22</span><a class="archive-post-title" href= "/2014/02/22/CSS学习笔记01/" >CSS学习笔记 一</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/21</span><a class="archive-post-title" href= "/2014/02/21/HTML学习笔记04/" >HTML学习笔记 四</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/20</span><a class="archive-post-title" href= "/2014/02/20/HTML学习笔记03/" >HTML学习笔记 三</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/19</span><a class="archive-post-title" href= "/2014/02/19/HTML学习笔记02/" >HTML学习笔记 二</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2014/02/17/HTML学习笔记01/" >HTML学习笔记 一</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/windows常用命令/" >常用快捷键及命令</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Note"><span class="iconfont-archer">&#xe606;</span>Note</span>
+    
+        <span class="sidebar-tag-name" data-tags="ECMA-262 6th"><span class="iconfont-archer">&#xe606;</span>ECMA-262 6th</span>
+    
+        <span class="sidebar-tag-name" data-tags="ECMA-262 5th"><span class="iconfont-archer">&#xe606;</span>ECMA-262 5th</span>
+    
+        <span class="sidebar-tag-name" data-tags="Emmet"><span class="iconfont-archer">&#xe606;</span>Emmet</span>
+    
+        <span class="sidebar-tag-name" data-tags="general"><span class="iconfont-archer">&#xe606;</span>general</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="CSS"><span class="iconfont-archer">&#xe60a;</span>CSS</span>
+    
+        <span class="sidebar-category-name" data-categories="ECMAScript"><span class="iconfont-archer">&#xe60a;</span>ECMAScript</span>
+    
+        <span class="sidebar-category-name" data-categories="general"><span class="iconfont-archer">&#xe60a;</span>general</span>
+    
+        <span class="sidebar-category-name" data-categories="HTML"><span class="iconfont-archer">&#xe60a;</span>HTML</span>
+    
+        <span class="sidebar-category-name" data-categories="JavaScript"><span class="iconfont-archer">&#xe60a;</span>JavaScript</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+
