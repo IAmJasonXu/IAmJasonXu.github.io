@@ -9,7 +9,7 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
-    <title>CSS学习笔记 五 · XuJian&#39;s Studio</title>
+    <title>HTML学习笔记 四 · XuJian&#39;s Studio</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -266,7 +266,7 @@
                 <a href="/" >XuJian&#39;s Studio.</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">CSS学习笔记 五</a>
+                <a href="#" class="post-name">HTML学习笔记 四</a>
             </div>
     </div>
     
@@ -287,7 +287,7 @@
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            CSS学习笔记 五
+            HTML学习笔记 四
             <!-- 404 -->
             
         </h1>
@@ -312,7 +312,7 @@
             <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = "/static/api/js/share.js"];</script>
             <div class="post-intro-meta">
                 <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                <span class="post-intro-time">2014/02/16</span>
+                <span class="post-intro-time">2014/02/21</span>
                 
                 <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                     <span class="iconfont-archer">&#xe604;</span>
@@ -336,18 +336,43 @@
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <h1 id="CSS学习笔记-·-五"><a href="#CSS学习笔记-·-五" class="headerlink" title="CSS学习笔记 · 五"></a>CSS学习笔记 · 五</h1>
+        <h1 id="HTML学习笔记-·-四"><a href="#HTML学习笔记-·-四" class="headerlink" title="HTML学习笔记 · 四"></a>HTML学习笔记 · 四</h1><p>⒋Html中的空格合并现象：<br>  原因：html对空格、tab以及换行不敏感，即所有相连的空格符、制表符以及回车符都会被合并为一个空格来显示。<br>  作用：方便调整页面代码布局，使其更加整洁，条理清晰。<br>★注意：只有HTML代码内容中的空格会合并，字符串属性值内的空格并不合并，因为其本身也是数据的一部分！！！<br>★注意：使用 <pre> 标签可以原样输出标签里的内容，即不进行 空格 合并！！！</pre></p>
+<p>⒌Html中的转义字符：<br>           空格        &nbsp;<br>  &lt;        小于号        &lt;</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; 	大于号		&amp;gt;</span><br><span class="line">&gt;</span><br><span class="line">&gt;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p>  &amp;        与号        &amp;<br>  …        …        …<br>★注意后面一定要以分号结尾！！！</p>
+</blockquote>
+<p>⒍SEO与标签的语义化：<br>  SEO：搜索引擎优化，让网页在搜索引擎的结果中具有更靠前的排名，以便增加点击量和访问流量；<br>  方法：花钱买排名；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">将页面做成静态页面（区别JSP动态页面，通过运行Java程序动态生成的页面）；</span><br><span class="line">发外链（在其它网站上放上自己网站的链接）；</span><br></pre></td></tr></table></figure>
+<p>★当前最重要：使页面更加的友好（规范）！在合适的地方使用合适的标签，合适地使用标签的语义化。<br>  只为讨好搜索引擎——网络爬虫！</p>
+<p>  语义化：根据内容的结构化（内容语义化），选择合适的标签（代码语义化）；<br>  方法：1.选择有语义的标签，尽可能少用div和span；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2.在语义不明确的时候，要选择有语义的标签；</span><br><span class="line">3.如果要设置样式，推荐使用css，不要使用纯样式标签b、i、u、s以及font标签；</span><br><span class="line">4.需要强调文本时可以使用strong、em、ins或del。</span><br></pre></td></tr></table></figure>
+<p>  意义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.网页结构合理；</span><br><span class="line">2.有利于SEO：和搜索引擎建立良好沟通，有了良好的结构和语义你的网页内容自然容易被搜索引擎抓取；</span><br><span class="line">3.方便其他设备解析（如屏幕阅读器、盲人阅读器、移动设备）；</span><br></pre></td></tr></table></figure>
+<pre><code>4.便于团队开发和维护。
+</code></pre><p>⒏Html中标签的嵌套规则：<br>★注意：Html中的标签是不能随意嵌套的，例如：在p标签中放置div标签，浏览器会默认将p标签拆分并补全成两份p标签，使得div与p标签同级（网页源代码内容不变，Elements解析中的内容改变）！！</p>
+<pre><code>1.推荐行内元素包含行内元素；
+2.段落标签中不能出现块级元素。
+</code></pre>
     </article>
     <!-- 前后页  -->
     <ul class="post-paginator">
         <li class="next">
             
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2014/02/22/CSS学习笔记01/" title= CSS学习笔记 一 >
+                    <div class="nextTitle">CSS学习笔记 一</div>
+                </a>
+            
         </li>
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href= "/2014/02/16/CSS学习笔记04/" title= CSS学习笔记 四 >
-                    <div class="prevTitle">CSS学习笔记 四</div>
+                <a href= "/2014/02/20/HTML学习笔记03/" title= HTML学习笔记 三 >
+                    <div class="prevTitle">HTML学习笔记 三</div>
                 </a>
             
         </li>
@@ -421,7 +446,7 @@
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CSS学习笔记-·-五"><span class="toc-number">1.</span> <span class="toc-text">CSS学习笔记 · 五</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HTML学习笔记-·-四"><span class="toc-number">1.</span> <span class="toc-text">HTML学习笔记 · 四</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
@@ -551,52 +576,7 @@
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <div class="total-archive"> Total : 12 </div>
+    <div class="total-archive"> Total : 11 </div>
     
     <div class="post-archive">
     
@@ -608,57 +588,52 @@
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/Emmet语法大全/" >Emmet语法大全</a>
+            <span class="archive-post-date">02/28</span><a class="archive-post-title" href= "/2014/02/28/Emmet语法大全/" >Emmet语法大全</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/CSS学习笔记01/" >CSS学习笔记 一</a>
+            <span class="archive-post-date">02/27</span><a class="archive-post-title" href= "/2014/02/27/CSS学习笔记05/" >CSS学习笔记 五</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/HTML学习笔记03/" >HTML学习笔记 三</a>
+            <span class="archive-post-date">02/26</span><a class="archive-post-title" href= "/2014/02/26/CSS学习笔记04/" >CSS学习笔记 四</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/HTML学习笔记05/" >HTML学习笔记 五</a>
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2014/02/25/CSS学习笔记03/" >CSS学习笔记 三</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/HTML学习笔记04/" >HTML学习笔记 四</a>
+            <span class="archive-post-date">02/24</span><a class="archive-post-title" href= "/2014/02/24/CSS学习笔记02/" >CSS学习笔记 二</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/HTML学习笔记01/" >HTML学习笔记 一</a>
+            <span class="archive-post-date">02/22</span><a class="archive-post-title" href= "/2014/02/22/CSS学习笔记01/" >CSS学习笔记 一</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/CSS学习笔记02/" >CSS学习笔记 二</a>
+            <span class="archive-post-date">02/21</span><a class="archive-post-title" href= "/2014/02/21/HTML学习笔记04/" >HTML学习笔记 四</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/HTML学习笔记02/" >HTML学习笔记 二</a>
+            <span class="archive-post-date">02/20</span><a class="archive-post-title" href= "/2014/02/20/HTML学习笔记03/" >HTML学习笔记 三</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/CSS学习笔记04/" >CSS学习笔记 四</a>
+            <span class="archive-post-date">02/19</span><a class="archive-post-title" href= "/2014/02/19/HTML学习笔记02/" >HTML学习笔记 二</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/CSS学习笔记05/" >CSS学习笔记 五</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/CSS学习笔记03/" >CSS学习笔记 三</a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2014/02/17/HTML学习笔记01/" >HTML学习笔记 一</a>
         </li>
     
     

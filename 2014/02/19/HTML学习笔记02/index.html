@@ -312,7 +312,7 @@
             <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = "/static/api/js/share.js"];</script>
             <div class="post-intro-meta">
                 <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                <span class="post-intro-time">2014/02/16</span>
+                <span class="post-intro-time">2014/02/19</span>
                 
                 <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                     <span class="iconfont-archer">&#xe604;</span>
@@ -336,14 +336,47 @@
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <h1 id="HTML学习笔记-·-二"><a href="#HTML学习笔记-·-二" class="headerlink" title="HTML学习笔记 · 二"></a>HTML学习笔记 · 二</h1>
+        <h1 id="HTML学习笔记-·-二"><a href="#HTML学习笔记-·-二" class="headerlink" title="HTML学习笔记 · 二"></a>HTML学习笔记 · 二</h1><p>HTML标签：</p>
+<p>¤单标签¤</p>
+<p>①hr标签（Horizontal Rule）：水平线标签，显示一条水平直线。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;hr /&gt;|&lt;hr&gt;</span><br></pre></td></tr></table></figure>
+<p>②br标签（Break）：换行标签，在当前位置添加换行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;br /&gt;|&lt;br&gt;</span><br></pre></td></tr></table></figure>
+<p>③meta标签：元信息标签，提供页面元信息；<br>      <meta name="" content="">|<meta name="" content=""><br>  常用用法1：主要用于提供当前网页的信息<br>      content属性是必须的，提供以下名称对所应的值！<br>      name=”description”：表示content内容是对网站的描述——SEO与搜索引擎权重；<br>      name=”keywords”：表示content内容是该网站的关键字——SEO与搜索引擎权重；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">name=&quot;author&quot;：网页的制作者；</span><br><span class="line">name=&quot;viewport&quot;：定义视口（html标签）；</span><br><span class="line">	&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, height=3000, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no&quot;&gt;</span><br><span class="line">name=&quot;apple-mobile-web-app-status-bar-style&quot;：设置移动端状态条颜色样式</span><br><span class="line">	&lt;meta name=&quot;apple-mobile-web-app-status-bar-style&quot; content=&quot;black&quot;&gt;</span><br><span class="line">name=&quot;format-detection&quot;：设置取消电话号码的默认格式</span><br><span class="line">	&lt;meta name=&quot;format-detection&quot; content=&quot;telephone=no&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;meta http-equiv=&quot;&quot; content=&quot;&quot; /&gt;|&lt;meta http-equiv=&quot;&quot; content=&quot;&quot;&gt;</span><br></pre></td></tr></table></figure>
+<p>  常用用法2：Xhtml和Html4</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">content属性是必须的，提供以下名称对所应的值！</span><br><span class="line">http-equiv=&quot;Content-Type&quot;：告知浏览器该文件类型及charset字符集；</span><br><span class="line">http-equiv=&quot;Refresh&quot;：网页重定向，如content=&quot;5;url=http://www.w3school.com.cn&quot;表示5秒后跳转到url指定的网页；</span><br><span class="line">http-equiv=&quot;X-UA-Compatible&quot;：设置浏览器优先使用什么模式来渲染页面；</span><br><span class="line">	&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;  </span><br><span class="line">☆注：http-equiv提供的元信息会被添加在响应报文头，优先传递给浏览器；</span><br><span class="line"></span><br><span class="line">&lt;meta charset=&quot;&quot;&gt;</span><br></pre></td></tr></table></figure>
+<p>  常用用法3：Html5</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">告知浏览器当前Html文件的字符集编码。</span><br></pre></td></tr></table></figure>
+<p>  字符集：表示文件存储时采用的字符编码系统，同一个字符在不同字符集中对应的二进制代码不一定相同，因而文件存储时采用的字符编码必须与meta标签提供的信息相一致，否则浏览器无法正确识别出网页内容，<br>  产生乱码现象。text记事本在保存时可以选择编码方式，sublime中可以通过文件菜单选项改变编码格式。<br>  UTF-8：国际，全字符，大、慢，汉字3字节；<br>  GBK：中国，中文日文，小、快，汉字2字节；<br>★注意：meta中设置的所有内容在页面中都不会显示，只用来提供给浏览器使用！</p>
+<p>④注释标签：将页面上的一段代码无效化，但仍然保留在源码当中；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--注释内容--&gt;</span><br></pre></td></tr></table></figure>
+<p>★页面中的注释分类：<br>  ①Html注释：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--注释内容--&gt;</span><br></pre></td></tr></table></figure>
+<p>  ②CSS注释：位于style标签内</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/*注释内容*/</span><br></pre></td></tr></table></figure>
+<p>  ③Javascript注释：位于script标签内</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//单行内容</span><br><span class="line">/*多行内容*/</span><br></pre></td></tr></table></figure>
+<p>★注意：Html和CSS的注释以及JS的多行注释都不能嵌套！！！<br>★其他作用：在写页面时可以使用注释来划分结构！<br>  <!--这是页面的头部，Begin--><br>  …<br>  <!--这是页面的头部，End--></p>
+<p>⑤base标签：为当前页面内的所有超链接设置默认的href和target属性值；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;base href=&quot;&quot; target=&quot;&quot;/&gt;|&lt;base href=&quot;&quot; target=&quot;&quot;&gt;</span><br></pre></td></tr></table></figure>
+<p>⑥link标签：引用一个外部文件；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;link rel=&quot;&quot; href=&quot;&quot;/&gt;|&lt;link rel=&quot;&quot; href=&quot;&quot;&gt;		&lt;!--必要属性：rel表示连接的类型，href表示连接文件的路径--&gt;</span><br><span class="line">&lt;link rel=&quot;stylesheet&quot; href=&quot;.css&quot;&gt;			&lt;!--引用外部样式表--&gt;</span><br><span class="line">&lt;link rel=&quot;icon&quot; href=&quot;&quot;&gt;				&lt;!--引用网页图标--&gt;</span><br></pre></td></tr></table></figure>
+<p>⑦img标签（Image）：图片标签。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=&quot;&quot; alt=&quot;&quot; /&gt;|&lt;img src=&quot;&quot; alt=&quot;&quot;&gt;		&lt;!--必要属性：src表示文件的相对或绝对路径URL，alt表示无法显示图片时的替换文本--&gt;</span><br></pre></td></tr></table></figure>
+<p>★注意：由于搜索引擎通过查看alt属性值来分类图片，所以通常要使用alt设置图片描述信息，有利于SEO！！</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">☆非必要属性title：通常是图片的描述说明，鼠标停留在图片上时显示；</span><br><span class="line">☆非必要属性width/height：设置宽度/高度；</span><br></pre></td></tr></table></figure>
+<p>★注意：给img标签设置width或height属性，单独设置某一项时，另一项按比例关系缩放（因为多媒体标签有自己的缩放比例关系），但是同时设置两个值时就有可能扭曲失真！！！<br>★注意：当浏览器内核显示页面过程中发现需要显示一个图片元素时，就需要再次发送一个请求报文，来从服务器获取该图片！</p>
+<p>★★★★文件路径分类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">相对路径：从当前文件所在的文件夹开始（./表示当前目录且可省略，../表示上一级目录且可以连用），只能访问到同一个盘符下的文件，无法访问到其他盘符下的文件；</span><br><span class="line">绝对路径：从某盘符或网络IP地址开始（如 C:\...或https://192.168.1.1/...），可以通过绝对路径访问其他盘的文件。</span><br></pre></td></tr></table></figure>
+
     </article>
     <!-- 前后页  -->
     <ul class="post-paginator">
         <li class="next">
             
                 <div class="nextSlogan">Next Post</div>
-                <a href= "/2014/02/16/HTML学习笔记03/" title= HTML学习笔记 三 >
+                <a href= "/2014/02/20/HTML学习笔记03/" title= HTML学习笔记 三 >
                     <div class="nextTitle">HTML学习笔记 三</div>
                 </a>
             
@@ -351,8 +384,8 @@
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href= "/2014/02/16/Emmet语法大全/" title= Emmet语法大全 >
-                    <div class="prevTitle">Emmet语法大全</div>
+                <a href= "/2014/02/17/HTML学习笔记01/" title= HTML学习笔记 一 >
+                    <div class="prevTitle">HTML学习笔记 一</div>
                 </a>
             
         </li>
@@ -556,52 +589,7 @@
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <div class="total-archive"> Total : 12 </div>
+    <div class="total-archive"> Total : 11 </div>
     
     <div class="post-archive">
     
@@ -613,57 +601,52 @@
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/Emmet语法大全/" >Emmet语法大全</a>
+            <span class="archive-post-date">02/28</span><a class="archive-post-title" href= "/2014/02/28/Emmet语法大全/" >Emmet语法大全</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/CSS学习笔记01/" >CSS学习笔记 一</a>
+            <span class="archive-post-date">02/27</span><a class="archive-post-title" href= "/2014/02/27/CSS学习笔记05/" >CSS学习笔记 五</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/HTML学习笔记03/" >HTML学习笔记 三</a>
+            <span class="archive-post-date">02/26</span><a class="archive-post-title" href= "/2014/02/26/CSS学习笔记04/" >CSS学习笔记 四</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/HTML学习笔记05/" >HTML学习笔记 五</a>
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2014/02/25/CSS学习笔记03/" >CSS学习笔记 三</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/HTML学习笔记04/" >HTML学习笔记 四</a>
+            <span class="archive-post-date">02/24</span><a class="archive-post-title" href= "/2014/02/24/CSS学习笔记02/" >CSS学习笔记 二</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/HTML学习笔记01/" >HTML学习笔记 一</a>
+            <span class="archive-post-date">02/22</span><a class="archive-post-title" href= "/2014/02/22/CSS学习笔记01/" >CSS学习笔记 一</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/CSS学习笔记02/" >CSS学习笔记 二</a>
+            <span class="archive-post-date">02/21</span><a class="archive-post-title" href= "/2014/02/21/HTML学习笔记04/" >HTML学习笔记 四</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/HTML学习笔记02/" >HTML学习笔记 二</a>
+            <span class="archive-post-date">02/20</span><a class="archive-post-title" href= "/2014/02/20/HTML学习笔记03/" >HTML学习笔记 三</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/CSS学习笔记04/" >CSS学习笔记 四</a>
+            <span class="archive-post-date">02/19</span><a class="archive-post-title" href= "/2014/02/19/HTML学习笔记02/" >HTML学习笔记 二</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/CSS学习笔记05/" >CSS学习笔记 五</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/CSS学习笔记03/" >CSS学习笔记 三</a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2014/02/17/HTML学习笔记01/" >HTML学习笔记 一</a>
         </li>
     
     

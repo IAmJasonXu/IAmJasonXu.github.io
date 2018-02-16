@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" >
+    <title>HTML学习笔记 一 · XuJian&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        height: 50vh;
+        overflow: hidden;
+        box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.7);
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= /css/style.css?v=20180204 as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" type="text/css" href= /css/mobile.css?v=20180204 media="(max-width: 980px)"/>
+    <link rel="icon" href= /assets/favicon.ico>
+    <script>
+  // load webfont-loader async, and add callback function
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+  
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntroTags = document.getElementsByClassName('post-intro-tags')[0],
+        postIntroMeat = document.getElementsByClassName('post-intro-meta')[0];
+      if (postIntroTags) {
+        postIntroTags.classList.add('post-fade-in');
+      }
+      if (postIntroMeat) {
+        postIntroMeat.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  async("https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", asyncCb)
+</script>
+    <script>
+        (function (w) {
+            "use strict";
+            // rel=preload support test
+            if (!w.loadCSS) {
+                w.loadCSS = function () { };
+            }
+            // define on the loadCSS obj
+            var rp = loadCSS.relpreload = {};
+            // rel=preload feature support test
+            // runs once and returns a function for compat purposes
+            rp.support = (function () {
+                var ret;
+                try {
+                    ret = w.document.createElement("link").relList.supports("preload");
+                } catch (e) {
+                    ret = false;
+                }
+                return function () {
+                    return ret;
+                };
+            })();
+
+            // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+            // then change that media back to its intended value on load
+            rp.bindMediaToggle = function (link) {
+                // remember existing media attr for ultimate state, or default to 'all'
+                var finalMedia = link.media || "all";
+
+                function enableStylesheet() {
+                    link.media = finalMedia;
+                }
+
+                // bind load handlers to enable media
+                if (link.addEventListener) {
+                    link.addEventListener("load", enableStylesheet);
+                } else if (link.attachEvent) {
+                    link.attachEvent("onload", enableStylesheet);
+                }
+
+                // Set rel and non-applicable media type to start an async request
+                // note: timeout allows this to happen async to let rendering continue in IE
+                setTimeout(function () {
+                    link.rel = "stylesheet";
+                    link.media = "only x";
+                });
+                // also enable media after 3 seconds,
+                // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+                setTimeout(enableStylesheet, 3000);
+            };
+
+            // loop through link elements in DOM
+            rp.poly = function () {
+                // double check this to prevent external calls from running
+                if (rp.support()) {
+                    return;
+                }
+                var links = w.document.getElementsByTagName("link");
+                for (var i = 0; i < links.length; i++) {
+                    var link = links[i];
+                    // qualify links to those with rel=preload and as=style attrs
+                    if (link.rel === "preload" && link.getAttribute("as") === "style" && !link.getAttribute("data-loadcss")) {
+                        // prevent rerunning on link
+                        link.setAttribute("data-loadcss", true);
+                        // bind listeners to toggle media back
+                        rp.bindMediaToggle(link);
+                    }
+                }
+            };
+
+            // if unsupported, run the polyfill
+            if (!rp.support()) {
+                // run once at least
+                rp.poly();
+
+                // rerun poly on an interval until onload
+                var run = w.setInterval(rp.poly, 500);
+                if (w.addEventListener) {
+                    w.addEventListener("load", function () {
+                        rp.poly();
+                        w.clearInterval(run);
+                    });
+                } else if (w.attachEvent) {
+                    w.attachEvent("onload", function () {
+                        rp.poly();
+                        w.clearInterval(run);
+                    });
+                }
+            }
+            // commonjs
+            if (typeof exports !== "undefined") {
+                exports.loadCSS = loadCSS;
+            }
+            else {
+                w.loadCSS = loadCSS;
+            }
+        }(typeof global !== "undefined" ? global : this));
+    </script>
+    <script src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js" defer></script>
+    
+    <script src="/scripts/main.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >XuJian&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">HTML学习笔记 一</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>XuJian's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            HTML学习笔记 一
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <!-- 文章页标签  -->
+            
+                <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = Note>Note</a>
+    
+</div>
+            
+            <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = "/static/api/js/share.js"];</script>
+            <div class="post-intro-meta">
+                <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                <span class="post-intro-time">2014/02/17</span>
+                
+                <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                    <span class="iconfont-archer">&#xe604;</span>
+                    <span id="busuanzi_value_page_pv"></span>
+                </span>
+                
+                <span class="shareWrapper">
+                    <span class="iconfont-archer shareIcon">
+                        &#xe601;
+                    </span>
+                    <span class="bdsharebuttonbox">
+                        <a href="#" class="bds_more shareText" data-cmd="more">Share</a>
+                    </span>
+                </span>
+            </div>
+        
+    </div>
+</div>
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="HTML学习笔记-·-一"><a href="#HTML学习笔记-·-一" class="headerlink" title="HTML学习笔记 · 一"></a>HTML学习笔记 · 一</h1><hr>
+<h2 id="㈠-认识网页："><a href="#㈠-认识网页：" class="headerlink" title="㈠ 认识网页："></a>㈠ 认识网页：</h2><h3 id="1-网页组成："><a href="#1-网页组成：" class="headerlink" title="1.网页组成："></a>1.网页组成：</h3><p>​    网页是由文字、图片、按钮、输入框、视频……等元素组成的，而这些元素的本质是——HTML标签；</p>
+<p>​    总结：网页其实就是由各种<strong><em>HTML标签</em></strong>组成的！</p>
+<h3 id="2-网页标准："><a href="#2-网页标准：" class="headerlink" title="2.网页标准："></a>2.网页标准：</h3><ul>
+<li>结构标准：<strong><em>HTML</em></strong>        -&gt; 搭建网页结构；<ul>
+<li>表现标准：<strong><em>CSS</em></strong>    -&gt;  修饰美化网页；</li>
+<li>行为标准：<strong><em>JavaScript</em></strong>-&gt; 让网页有动作；</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="㈡浏览器与服务器："><a href="#㈡浏览器与服务器：" class="headerlink" title="㈡浏览器与服务器："></a>㈡浏览器与服务器：</h2><h3 id="1-浏览器："><a href="#1-浏览器：" class="headerlink" title="1.浏览器："></a>1.浏览器：</h3><p>​    浏览器是指，可以显示网页服务器或者文件系统的HTML文件（标准通用标记语言的一个应用）内容，并让用户与这些文件交互的一种软件。</p>
+<h3 id="2-服务器："><a href="#2-服务器：" class="headerlink" title="2.服务器："></a>2.服务器：</h3><p>​    服务器也称伺服器，是指提供计算服务的设备。</p>
+<h3 id="3-一般工作过程："><a href="#3-一般工作过程：" class="headerlink" title="3.一般工作过程："></a>3.一般工作过程：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">浏览器地址栏中输入域名 → 浏览器发送请求报文 → 服务器发送响应报文 → 浏览器内核解释并渲染网页内容 → 显示网页</span><br></pre></td></tr></table></figure>
+<p><strong><em>★注意：</em></strong>输入的<strong>域名</strong>可以通过<em>DNS域名解析</em>服务转换为具体的<strong>IP地址</strong>，地址栏中一个完整的URL包括——</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">协议名(Http/Https/Ftp/File等)://域名或IP地址[:端口号]/路径标识?查询参数#hash地址</span><br></pre></td></tr></table></figure>
+<p><em>☆注：</em>①Http协议：超文本传输协议，也就是浏览器和服务器端的网页传输数据的约束和规范，包括请求报文、响应报文、URL统一资源定位符等；</p>
+<p>Https协议：使用安全套接字进行加密传输，比<strong>Http</strong>更加安全，目前用的最多；</p>
+<p>Ftp协议：文件传输协议。</p>
+<p>②可以在地址栏中用<strong>localhost</strong>代表本地主机的IP地址。</p>
+<p>③如果地址栏中没有设置要访问的端口号，则<strong>浏览器</strong>会采用默认的端口<strong><em>80</em></strong>；如果没有设置要访问的具体页面，则<strong><em>服务器</em></strong>通常会返回设置的默认主页。</p>
+<h3 id="4-浏览器开发者工具："><a href="#4-浏览器开发者工具：" class="headerlink" title="4.浏览器开发者工具："></a>4.浏览器开发者工具：</h3><p>通过页面中右键菜单的<em>审查元素/检查</em>或按<em>F12</em>可以打开浏览器中的开发者工具。</p>
+<ul>
+<li>Network→Name选择相应网页文件→Headers查看请求报文及响应报文相关信息Request Headers/Response Headers→Response查看响应报文内容；      </li>
+</ul>
+<ul>
+<li><p>Elements→将网页源代码解析整理之后以元素的形式排列显示，可以在该处暂时删除修改元素、调整样式布局、直接修改盒子模型等；</p>
+<p><strong><em>★注意：</em></strong>此处的内容并不一定与源代码完全相同，内核可能会自动更改一些错误！！！</p>
+</li>
+</ul>
+<h3 id="5-浏览器内核："><a href="#5-浏览器内核：" class="headerlink" title="5.浏览器内核："></a>5.浏览器内核：</h3><p>​    又称<strong>渲染引擎</strong>——负责对网页语法的解释并渲染网页内容，不同的内核在渲染同一内容时会有差别；</p>
+<p>分类：</p>
+<ul>
+<li>Trident——<strong><em>微软IE</em></strong>，猎豹，360，百度；</li>
+<li>Gecko——<strong><em>火狐Firefox</em></strong>；</li>
+<li>Presto——<strong><em>欧鹏Opera</em></strong>，现已放弃转向Blink；</li>
+<li>Webkit——<strong><em>苹果Safari</em></strong>；</li>
+<li>Blink——<strong><em>谷歌Chrome</em></strong>，Opera；</li>
+</ul>
+<h3 id="6-浏览器的基本组成："><a href="#6-浏览器的基本组成：" class="headerlink" title="6.浏览器的基本组成："></a>6.浏览器的基本组成：</h3><ul>
+<li>用户界面；</li>
+<li>浏览器引擎：<ul>
+<li>渲染引擎(内核)：处理HTML和CSS；</li>
+<li>JS解析器：处理JavaScript。</li>
+</ul>
+</li>
+</ul>
+<h3 id="7-浏览器生成页面的步骤：内核渲染引擎的工作过程；"><a href="#7-浏览器生成页面的步骤：内核渲染引擎的工作过程；" class="headerlink" title="7.浏览器生成页面的步骤：内核渲染引擎的工作过程；"></a>7.浏览器生成页面的步骤：内核渲染引擎的工作过程；</h3><pre><code>1.根据HTML生成结构树；
+2.根据CSS生成样式树；
+3.将结构树和样式树结合生成渲染树(页面已经可以准备进行渲染了)；
+4.渲染操作：
+  4.1 排列：将元素设置到指定位置，并设置指定尺寸；
+  4.2 绘制：写字，画颜色，画图片；
+5.通过用户和浏览器的交互操作，可能会触发页面的一些效果，而这些效果会引发重排和重绘，从而对页面的性能造成影响。
+</code></pre><hr>
+<h2 id="㈢HTML-Hyper-Text-Markup-Language-超文本标记语言："><a href="#㈢HTML-Hyper-Text-Markup-Language-超文本标记语言：" class="headerlink" title="㈢HTML(Hyper Text Markup Language)超文本标记语言："></a>㈢HTML(Hyper Text Markup Language)超文本标记语言：</h2><p>​    网页的<strong><em>结构标准</em></strong>，是一种在浏览器上运行的<em>标记语言</em>。</p>
+<h3 id="1-HTML基本结构："><a href="#1-HTML基本结构：" class="headerlink" title="1.HTML基本结构："></a>1.HTML基本结构：</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--DOCTYPE标签：告诉浏览器当前文档的类型--&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE...&gt;</span></span><br><span class="line"><span class="comment">&lt;!--Html标签：Html结构中的根标签，有且只能有一个--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--Head标签：可以设置网页样式style，可以设置网页标题title，设置网页关键字meta，网页描述信息meta，js代码编写script，链接文件link--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  	<span class="comment">&lt;!--Title标签：设置网页标题--&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">title</span>&gt;</span>网页标题<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">  	<span class="comment">&lt;!--Meta标签：提供元信息——名称/值对，name/http-equiv提供名称，content提供对应的值--&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">""</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">meta</span> <span class="attr">...</span>&gt;</span></span><br><span class="line">  	<span class="comment">&lt;!--Style标签：放置CSS样式--&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">	<span class="comment">&lt;!--Script标签：放置JS脚本--&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span>		</span><br><span class="line">  	<span class="comment">&lt;!--Base标签：设置所有超链接的默认属性值--&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">base</span> <span class="attr">href</span>=<span class="string">""</span> <span class="attr">target</span>=<span class="string">""</span>&gt;</span></span><br><span class="line">  	<span class="comment">&lt;!--Link标签：链接CSS等文件--&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">""</span> <span class="attr">href</span>=<span class="string">""</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--Body标签： 放置的是网页的主体--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span>					</span><br><span class="line">  <span class="comment">&lt;!--其他代码--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-DOCTYPE："><a href="#2-DOCTYPE：" class="headerlink" title="2.DOCTYPE："></a>2.DOCTYPE：</h3><p>​    <strong>文档类型标签</strong>位于文件最开头，html标签之上，用来告知浏览器该文档使用的规范；</p>
+<h4 id="1-Xhtml的Transitional过渡型规范："><a href="#1-Xhtml的Transitional过渡型规范：" class="headerlink" title="1)Xhtml的Transitional过渡型规范："></a>1)Xhtml的Transitional过渡型规范：</h4><p>&lt;!DOCTYPE html PUBLIC “-//W3C//DTD XHTML 1.0 Transitional//EN” “<a href="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;" target="_blank" rel="noopener">http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;</a></p>
+<h4 id="2-Xhtml的Strict严格型规范："><a href="#2-Xhtml的Strict严格型规范：" class="headerlink" title="2)Xhtml的Strict严格型规范："></a>2)Xhtml的Strict严格型规范：</h4><p>&lt;!DOCTYPE html PUBLIC “-//W3C//DTD XHTML 1.0 Strict//EN” “<a href="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;" target="_blank" rel="noopener">http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;</a></p>
+<h4 id="3-Xhtml的Frameset框架集定义规范："><a href="#3-Xhtml的Frameset框架集定义规范：" class="headerlink" title="3)Xhtml的Frameset框架集定义规范："></a>3)Xhtml的Frameset框架集定义规范：</h4><h4 id="4-Html4的Transitional过渡型规范："><a href="#4-Html4的Transitional过渡型规范：" class="headerlink" title="4)Html4的Transitional过渡型规范："></a>4)Html4的Transitional过渡型规范：</h4><p>&lt;!DOCTYPE HTML PUBLIC “-//W3C//DTD HTML 4.01 Transitional//EN” “<a href="http://www.w3.org/TR/html4/loose.dtd&quot;&gt;" target="_blank" rel="noopener">http://www.w3.org/TR/html4/loose.dtd&quot;&gt;</a></p>
+<h4 id="5-Html4的Strict严格型规范："><a href="#5-Html4的Strict严格型规范：" class="headerlink" title="5)Html4的Strict严格型规范："></a>5)Html4的Strict严格型规范：</h4><p>&lt;!DOCTYPE HTML PUBLIC “-//W3C//DTD HTML 4.01//EN” “<a href="http://www.w3.org/TR/html4/strict.dtd&quot;&gt;" target="_blank" rel="noopener">http://www.w3.org/TR/html4/strict.dtd&quot;&gt;</a></p>
+<h4 id="6-Html4的Frameset框架集定义规范："><a href="#6-Html4的Frameset框架集定义规范：" class="headerlink" title="6)Html4的Frameset框架集定义规范："></a>6)Html4的Frameset框架集定义规范：</h4><p>  <em>☆注：</em>W3C——W3C标准组织，制定了<strong><em>三层分离</em></strong>标准（HTML结构，CSS样式，JavaScript行为）；DTD（Document Type Definition）——文档类型定义。</p>
+<h4 id="7-现在使用HTML5规范："><a href="#7-现在使用HTML5规范：" class="headerlink" title="7)现在使用HTML5规范："></a>7)现在使用HTML5规范：</h4><p>&lt;!DOCTYPE HTML&gt;</p>
+<p><strong><em>★注意：</em></strong>每个页面都必须设置一个DOCTYPE，如果不设置，浏览器会默认开启<strong><em>quirks mode怪异模式</em></strong>解析页面！！！</p>
+<h3 id="3-标签分类："><a href="#3-标签分类：" class="headerlink" title="3.标签分类："></a>3.标签分类：</h3><h4 id="写法分类："><a href="#写法分类：" class="headerlink" title="写法分类："></a>写法分类：</h4><ul>
+<li>单标签（开放标签/自闭合标签）：只有一个开始标签；</li>
+</ul>
+<p><em>☆注：</em>Xhtml规定——单标签必须自己闭合自己，即在末尾加”/“；<br>        Html4中不加”/“；<br>        Html5中都可以，标准中大多不加”/“。</p>
+<ul>
+<li>双标签（闭合标签）：有开始标签和结束结束（名称相同，结束开头加/）；</li>
+</ul>
+<h4 id="关系分类："><a href="#关系分类：" class="headerlink" title="关系分类："></a>关系分类：</h4><ul>
+<li>并列关系：兄弟；</li>
+<li>嵌套关系：父子。</li>
+</ul>
+
+    </article>
+    <!-- 前后页  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2014/02/19/HTML学习笔记02/" title= HTML学习笔记 二 >
+                    <div class="nextTitle">HTML学习笔记 二</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2014/02/16/windows常用命令/" title= 常用快捷键及命令 >
+                    <div class="prevTitle">常用快捷键及命令</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC版-->
+
+    <!--PC版-->
+
+
+    
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:JasonExtremity@163.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/IAmJasonXu" class="iconfont-archer github" target="_blank" title="github"></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="/atom.xml" class="iconfont-archer rss" target="_blank" title="rss"></a>
+            
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+        <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span>
+        </span>
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper">
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HTML学习笔记-·-一"><span class="toc-number">1.</span> <span class="toc-text">HTML学习笔记 · 一</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#㈠-认识网页："><span class="toc-number">1.1.</span> <span class="toc-text">㈠ 认识网页：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-网页组成："><span class="toc-number">1.1.1.</span> <span class="toc-text">1.网页组成：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-网页标准："><span class="toc-number">1.1.2.</span> <span class="toc-text">2.网页标准：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#㈡浏览器与服务器："><span class="toc-number">1.2.</span> <span class="toc-text">㈡浏览器与服务器：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-浏览器："><span class="toc-number">1.2.1.</span> <span class="toc-text">1.浏览器：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-服务器："><span class="toc-number">1.2.2.</span> <span class="toc-text">2.服务器：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-一般工作过程："><span class="toc-number">1.2.3.</span> <span class="toc-text">3.一般工作过程：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-浏览器开发者工具："><span class="toc-number">1.2.4.</span> <span class="toc-text">4.浏览器开发者工具：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-浏览器内核："><span class="toc-number">1.2.5.</span> <span class="toc-text">5.浏览器内核：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-浏览器的基本组成："><span class="toc-number">1.2.6.</span> <span class="toc-text">6.浏览器的基本组成：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-浏览器生成页面的步骤：内核渲染引擎的工作过程；"><span class="toc-number">1.2.7.</span> <span class="toc-text">7.浏览器生成页面的步骤：内核渲染引擎的工作过程；</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#㈢HTML-Hyper-Text-Markup-Language-超文本标记语言："><span class="toc-number">1.3.</span> <span class="toc-text">㈢HTML(Hyper Text Markup Language)超文本标记语言：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-HTML基本结构："><span class="toc-number">1.3.1.</span> <span class="toc-text">1.HTML基本结构：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-DOCTYPE："><span class="toc-number">1.3.2.</span> <span class="toc-text">2.DOCTYPE：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Xhtml的Transitional过渡型规范："><span class="toc-number">1.3.2.1.</span> <span class="toc-text">1)Xhtml的Transitional过渡型规范：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-Xhtml的Strict严格型规范："><span class="toc-number">1.3.2.2.</span> <span class="toc-text">2)Xhtml的Strict严格型规范：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Xhtml的Frameset框架集定义规范："><span class="toc-number">1.3.2.3.</span> <span class="toc-text">3)Xhtml的Frameset框架集定义规范：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-Html4的Transitional过渡型规范："><span class="toc-number">1.3.2.4.</span> <span class="toc-text">4)Html4的Transitional过渡型规范：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-Html4的Strict严格型规范："><span class="toc-number">1.3.2.5.</span> <span class="toc-text">5)Html4的Strict严格型规范：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-Html4的Frameset框架集定义规范："><span class="toc-number">1.3.2.6.</span> <span class="toc-text">6)Html4的Frameset框架集定义规范：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-现在使用HTML5规范："><span class="toc-number">1.3.2.7.</span> <span class="toc-text">7)现在使用HTML5规范：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-标签分类："><span class="toc-number">1.3.3.</span> <span class="toc-text">3.标签分类：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#写法分类："><span class="toc-number">1.3.3.1.</span> <span class="toc-text">写法分类：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#关系分类："><span class="toc-number">1.3.3.2.</span> <span class="toc-text">关系分类：</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-archive"> Total : 11 </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2014 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/28</span><a class="archive-post-title" href= "/2014/02/28/Emmet语法大全/" >Emmet语法大全</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/27</span><a class="archive-post-title" href= "/2014/02/27/CSS学习笔记05/" >CSS学习笔记 五</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/26</span><a class="archive-post-title" href= "/2014/02/26/CSS学习笔记04/" >CSS学习笔记 四</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/25</span><a class="archive-post-title" href= "/2014/02/25/CSS学习笔记03/" >CSS学习笔记 三</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/24</span><a class="archive-post-title" href= "/2014/02/24/CSS学习笔记02/" >CSS学习笔记 二</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/22</span><a class="archive-post-title" href= "/2014/02/22/CSS学习笔记01/" >CSS学习笔记 一</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/21</span><a class="archive-post-title" href= "/2014/02/21/HTML学习笔记04/" >HTML学习笔记 四</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/20</span><a class="archive-post-title" href= "/2014/02/20/HTML学习笔记03/" >HTML学习笔记 三</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/19</span><a class="archive-post-title" href= "/2014/02/19/HTML学习笔记02/" >HTML学习笔记 二</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2014/02/17/HTML学习笔记01/" >HTML学习笔记 一</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/16</span><a class="archive-post-title" href= "/2014/02/16/windows常用命令/" >常用快捷键及命令</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Note"><span class="iconfont-archer">&#xe606;</span>Note</span>
+    
+        <span class="sidebar-tag-name" data-tags="general"><span class="iconfont-archer">&#xe606;</span>general</span>
+    
+        <span class="sidebar-tag-name" data-tags="Emmet"><span class="iconfont-archer">&#xe606;</span>Emmet</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="CSS"><span class="iconfont-archer">&#xe60a;</span>CSS</span>
+    
+        <span class="sidebar-category-name" data-categories="HTML"><span class="iconfont-archer">&#xe60a;</span>HTML</span>
+    
+        <span class="sidebar-category-name" data-categories="general"><span class="iconfont-archer">&#xe60a;</span>general</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: '/'
+    }
+</script>
+    <!-- 不蒜子  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ统计  -->
+    
+    </div>
+    </body>
+</html>
+
+
